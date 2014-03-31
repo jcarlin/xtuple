@@ -53,11 +53,6 @@
         }
       };
       model.on(eventName, idChanged);
-
-      // XXX - problems with model events
-      if (model.getStatusString() === "READY_NEW") {
-        idChanged();
-      }
     } else {
       done(workspaceContainer);
     }
@@ -125,6 +120,7 @@
     _.each(createHash, function (value, key) {
       var widgetFound = false,
         attribute;
+
       _.each(workspace.$, function (widget) {
         if (widget.attr === key) {
           widgetFound = true;
@@ -133,7 +129,6 @@
       });
       assert.isTrue(widgetFound, "Cannot find widget for attr " + key + " in workspace " + workspace.kind);
       attribute = workspace.value.get(key);
-
       if (attribute.idAttribute && !value.idAttribute) {
         // the attribute has been turned into a model
         assert.equal(attribute.id, value[attribute.idAttribute]);
