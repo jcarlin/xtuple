@@ -2,7 +2,8 @@
 newcap:true, noarg:true, regexp:true, undef:true, strict:true, trailing:true,
 white:true*/
 /*global XV:true, XT:true, _:true, console:true, XM:true, Backbone:true, require:true, assert:true,
-setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe:true, beforeEach:true */
+setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe:true,
+beforeEach:true, XG:true */
 
 (function () {
   "use strict";
@@ -10,7 +11,9 @@ setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe
   var async = require("async"),
     _ = require("underscore"),
     common = require("../lib/common"),
-    assert = require("chai").assert;
+    assert = require("chai").assert,
+    smoke = require("../lib/smoke"),
+    crud = require("../lib/crud");
 
   //
   // Complicated business logic for quote and sales order saving
@@ -167,7 +170,8 @@ setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe
     }],
     updateHash: {
       orderNotes: "foo"
-    }
+    },
+    captureObject: true
   };
 
   var additionalTests = function () {
@@ -279,6 +283,7 @@ setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe
       });
     });
     describe("Sales order workflow", function () {
+      this.timeout(10000);
       var salesOrderModel,
         saleTypeModel,
         characteristicAssignment,
@@ -528,6 +533,63 @@ setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe
         salesOrderModel.set({saleType: null});
         salesOrderModel.get("workflow").reset([]);
         salesOrderModel.get("characteristics").reset([]);
+      });
+      /**
+        @member -
+        @memberof SalesOrder
+        @description If the Sales Order's Schedule Date changes, all the line item's schedule date
+          should change as well. If manufacturing enabled, the client will notify user if item's 
+          Schedule Date is not on the "Site Calendar" with message: "_nextWorkingDate?".loc()".
+      */
+      it("Changing the schedule date will update line item's schedule dates", function (done) {
+        var orderNumber = XG.capturedId,
+          workspaceContainer,
+          workspace,
+          postbooks = XT.app.$.postbooks,
+          navigator = smoke.navigateToList(XT.app, "XV.SalesOrderList"),
+          list = navigator.$.contentPanels.getActive(),
+          collection = list.value,
+          newScheduleDate = new Date("5/11/2014"),
+          changeScheduleDate = function (workspace) {
+            workspace.value.set("scheduleDate", newScheduleDate);
+            var notifyPopup;
+            notifyPopup = postbooks.$.notifyPopup;
+
+            // Need something like: if (XT.app.$.postbooks.$.notifyMessage.showing)
+            // and check name or message of notify.
+            setTimeout(function () {
+              console.log(postbooks.$.notifyMessage.content);
+              XT.app.$.postbooks.notifyTap({}, {originator: {name: "notifyYes"}});
+            }, 3000);
+            
+            /*setTimeout(function () {
+              console.log(postbooks.$.notifyMessage.content);
+              XT.app.$.postbooks.notifyTap({}, {originator: {name: "notifyNo"}});
+            }, 3000);*/
+            
+            
+            setTimeout(function () {
+              console.log(postbooks.$.notifyMessage.content);
+              assert.equal(workspace.value.get("lineItems").models[0].get("scheduleDate"), newScheduleDate);
+              done();
+            }, 3000);
+          },
+          isSalesOrderWorkspace = function () {
+            workspace = workspaceContainer.$.workspace;
+            assert.equal(workspace, "XV.SalesOrderWorkspace");
+            assert.equal(workspace.value.id, orderNumber);
+            changeScheduleDate(workspace);
+          };
+
+        workspaceContainer = XT.app.$.postbooks.getActive();
+        assert.isDefined(workspaceContainer);
+        assert.equal(list, "XV.SalesOrderList");
+
+        navigator.doWorkspace({
+          workspace: list.getWorkspace(),
+          id: orderNumber,
+          success: isSalesOrderWorkspace
+        });
       });
       /**
         @member -
