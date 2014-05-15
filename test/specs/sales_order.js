@@ -557,12 +557,31 @@ setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe
       });
     });
     describe("Sales order line", function () {
-      var lineItem,
+      var salesOrder,
+        salesOrderModel,
+        lineItem,
         item,
         alias;
 
       before(function (done) {
         async.parallel([
+          function (done) {
+            common.initializeModel(salesOrderModel, XM.SalesOrder, function (err, model) {
+              salesOrderModel = model;
+              salesOrderModel.set(spec.createHash);
+              salesOrderModel.notify = function (message, options) {
+                // whatever it is, I'll take it!
+                options.callback({answer: true});
+              };
+              done();
+            });
+          },
+          function (done) {
+            common.fetchModel(salesOrder, XM.SalesOrder, spec.createHash, function (err, model) {
+              salesOrder = model;
+              done();
+            });
+          },
           function (done) {
             common.initializeModel(lineItem, XM.SalesOrderLine, function (err, model) {
               lineItem = model;
@@ -581,7 +600,9 @@ setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe
               done();
             });
           }
-        ], done);
+        ], done());
+        //salesOrderModel.fetch();
+        console.log(salesOrderModel.get(idAttribute));
       });
       // this is much trickier now that we match the alias account to the parent customer
       it.skip("puts the alias in the customer part number field when an item is selected", function () {
