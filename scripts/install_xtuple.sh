@@ -1,12 +1,36 @@
 #!/bin/bash
 
+set -e
+
+echo -n "Checking for sudo..."
+if ! which sudo ;
+then
+  echo "Please install sudo and grant yourself access to sudo:"
+  echo
+  echo "   # apt-get install sudo"
+  echo "   # addgroup $USER sudo"
+  echo
+  exit 1
+fi
+
 alias sudo='sudo env PATH=$PATH $@'
+
+# Make sure we have all the essential tools we need
+sudo apt-get update
+sudo apt-get -q -y install \
+  git \
+  curl \
+  python-software-properties \
+  software-properties-common
 
 NODE_VERSION=0.8.26
 
+DEBDIST=`lsb_release -c -s`
+echo "Trying to install xTuple for platform ${DEBDIST}"
+
 RUN_DIR=$(pwd)
 LOG_FILE=$RUN_DIR/install.log
-cp $LOG_FILE $LOG_FILE.old 2>&1 &> /dev/null
+cp $LOG_FILE $LOG_FILE.old 2>&1 &> /dev/null || true
 log() {
 	echo "xtuple >> $@"
 	echo $@ >> $LOG_FILE
@@ -73,8 +97,7 @@ while getopts ":d:ipnhmx-:" opt; do
       echo "Usage: install_xtuple [OPTION]"
 	 echo "Build the full xTuple Mobile Development Environment."
 	 echo ""
-	 echo "To install everything, run sudo ./scripts/install_xtuple.sh"
-	 echo "Everything will go in /usr/local/src/xtuple"
+	 echo "To install everything, run bash /scripts/install_xtuple.sh"
 	 echo ""
 	 echo -e "  -h\t\t"
 	 echo -e "  -i\t\t"
@@ -108,7 +131,12 @@ fi
 
 install_packages() {
   log "installing debian packages..."
-  echo 'deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main' | sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
+  if [ "${DEBDIST}" = "wheezy" ];
+  then
+    # for Debian wheezy (7.x) we need some things from the wheezy-backports
+    sudo add-apt-repository -y "deb http://ftp.debian.org/debian wheezy-backports main"
+  fi
+  sudo add-apt-repository -y "deb http://apt.postgresql.org/pub/repos/apt/ ${DEBDIST}-pgdg main"
   sudo wget -qO- https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
   sudo apt-get -qq update 2>&1 | tee -a $LOG_FILE
   sudo apt-get -q -y install curl build-essential libssl-dev postgresql-9.1 postgresql-server-dev-9.1 postgresql-contrib-9.1 postgresql-9.1-plv8 2>&1 | tee -a $LOG_FILE
@@ -125,7 +153,7 @@ install_packages() {
   sudo nvm alias default $NODE_VERSION
   sudo nvm alias xtuple $NODE_VERSION
 
-	// npm no longer supports its self-signed certificates
+	# npm no longer supports its self-signed certificates
 	log "telling npm to use known registrars..."
 	npm config set ca ""
 
@@ -174,7 +202,7 @@ setup_postgres() {
 	sudo service postgresql restart
 
   log "dropping existing db, if any..."
-	sudo -u postgres dropdb $DATABASE
+	sudo -u postgres dropdb $DATABASE || true
 
 	cdir $BASEDIR/postgres
 

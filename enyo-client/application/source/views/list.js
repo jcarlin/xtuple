@@ -120,6 +120,10 @@ trailing:true, white:true, strict: false*/
       ]}
     ],
     getWorkspace: function () {
+      if (!this._lastTapIndex) {
+        // don't respond to events waterfalled from other models
+        return;
+      }
       var collection = this.getValue(),
         model = collection.at(this._lastTapIndex),
         recordType = "XM." + model.get("activityType");
@@ -918,10 +922,10 @@ trailing:true, white:true, strict: false*/
           {kind: "XV.ListColumn", classes: "third", components: [
             {kind: "XV.ListAttr", attr: "shared", formatter: "formatShared"}
           ]},
-          {kind: "XV.ListColumn", classes: "icon", components: [
+          {kind: "XV.ListColumn",  components: [
             {tag: "i", classes: "icon-remove list-icon", ontap: "removeRow"}
           ]},
-          {kind: "XV.ListColumn", classes: "icon", components: [
+          {kind: "XV.ListColumn", components: [
             {tag: "i", classes: "icon-signout list-icon", ontap: "shareRow"}
           ]}
         ]}
@@ -1885,7 +1889,7 @@ trailing:true, white:true, strict: false*/
 
         afterSalesOrderCreated = function () {
           var value = this.getValue(),
-            gridBox = this.$.salesOrderLineItemGridBox;
+            gridBox = this.$.salesOrderLineItemBox;
 
           value.setStatus(XM.Model.BUSY_FETCHING);
           value.set(attrs);
