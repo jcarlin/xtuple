@@ -72,9 +72,9 @@ select xt.install_js('XM','ItemSite','xtuple', $$
       idParams = [],
       etags,
       sqlCount,
-      sql1 = 'select pt1.%3$I as id ' +
+      sql1 = 'select t1.%3$I as id ' +
              'from ( ' +
-             'select t1.* as id ' +
+             'select * ' +
              'from %1$I.%2$I t1 {joins} ' +
              'where {conditions} {extra}',
       sql2 = 'select * from %1$I.%2$I where id in ({ids}) {orderBy}';
@@ -132,10 +132,10 @@ select xt.install_js('XM','ItemSite','xtuple', $$
 
     /* Check if public.item is already joined through clause.joins. */
     if (clause.joins && clause.joins.length) {
-      itemJoinMatches = clause.joins.match(/(.item )(jt\d+)/g);
+      itemJoinMatches = clause.joins.match(/(.item )(t\d+)/g);
 
       if (itemJoinMatches && itemJoinMatches.length) {
-        itemJoinTable = itemJoinMatches[0].match(/(jt\d+)/g);
+        itemJoinTable = itemJoinMatches[0].match(/(t\d+)/g);
       }
     }
 
@@ -214,7 +214,7 @@ select xt.install_js('XM','ItemSite','xtuple', $$
     }
 
     sql1 = XT.format(
-      sql1 += ') pt1 group by pt1.%3$I{groupBy} {orderBy} %5$s %6$s;',
+      sql1 += ') t1 group by t1.%3$I{groupBy} {orderBy} %5$s %6$s;',
       [tableNamespace, table, idColumn, backingTypeJoinColumn, limit, offset]
     );
 
@@ -225,13 +225,13 @@ select xt.install_js('XM','ItemSite','xtuple', $$
       clause.orderByColumns = XT.format('order by t1.%1$I', [idColumn]);
     }
 
-    /* Change table reference in group by and order by to pt1. */
+    /* Change table reference in group by and order by to pt1. 
     if (clause.groupByColumns && clause.groupByColumns.length) {
       clause.groupByColumns = clause.groupByColumns.replace(/t1./g, 'pt1.');
     }
     if (clause.orderByColumns && clause.orderByColumns.length) {
       clause.orderByColumns = clause.orderByColumns.replace(/t1./g, 'pt1.');
-    }
+    }*/
 
     /* Query the model */
     sql1 = sql1.replace(/{conditions}/g, clause.conditions)

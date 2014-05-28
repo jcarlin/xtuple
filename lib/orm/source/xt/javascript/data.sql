@@ -386,7 +386,7 @@ select xt.install_js('XT','Data','xtuple', $$
                           this.getNamespaceFromNamespacedTable(childOrm.table),
                           this.getTableFromNamespacedTable(childOrm.table),
                           sourceTableAlias, prop.toMany.column,
-                          XT.Orm.primaryKey(childOrm, true)
+                          XT.Orm.primaryKey(childOrm, true) 
                         );
                       }
                       joins.push("left join %" + (joinIdentifiers.length - 4) + "$I.%" + (joinIdentifiers.length - 3)
@@ -497,7 +497,8 @@ select xt.install_js('XT','Data','xtuple', $$
               orderByParams[pcount] += "%" + orderByIdentifiers.length + "$I";
 
               if (n === parts.length - 1) {
-                orderByColumnIdentifiers.push("jt" + (joins.length - 1));
+                /*orderByColumnIdentifiers.push("jt" + (joins.length - 1));*/
+                orderByColumnIdentifiers.push("t1");
                 orderByColumnIdentifiers.push(prop.attr.column);
                 orderByColumnParams[pcount] += "%" + (orderByColumnIdentifiers.length - 1) + "$I.%" + orderByColumnIdentifiers.length + "$I"
                 groupByColumnParams[pcount] += "%" + (orderByColumnIdentifiers.length - 1) + "$I.%" + orderByColumnIdentifiers.length + "$I"
@@ -1105,7 +1106,7 @@ select xt.install_js('XT','Data','xtuple', $$
           } else {
             if (ormp.toOne && nkey) {
               if (iorm.table.indexOf(".") > 0) {
-                toOneQuery = "select %1$I from %2$I.%3$I where %4$I = $" + count;
+                toOneQuery = "select * from %2$I.%3$I where %4$I = $" + count;
                 toOneSql = XT.format(toOneQuery, [
                     XT.Orm.primaryKey(iorm, true),
                     iorm.table.beforeDot(),
@@ -1113,7 +1114,7 @@ select xt.install_js('XT','Data','xtuple', $$
                     nkey
                   ]);
               } else {
-                toOneQuery = "select %1$I from %2$I where %3$I = $" + count;
+                toOneQuery = "select * from %2$I where %3$I = $" + count;
                 toOneSql = XT.format(toOneQuery, [
                     XT.Orm.primaryKey(iorm, true),
                     iorm.table,
@@ -1411,7 +1412,7 @@ select xt.install_js('XT','Data','xtuple', $$
               }
             } else if (ormp.toOne && nkey) {
               if (iorm.table.indexOf(".") > 0) {
-                toOneQuery = "select %1$I from %2$I.%3$I where %4$I = $" + count;
+                toOneQuery = "select * from %2$I.%3$I where %4$I = $" + count;
                 toOneSql = XT.format(toOneQuery, [
                     XT.Orm.primaryKey(iorm, true),
                     iorm.table.beforeDot(),
@@ -1419,7 +1420,7 @@ select xt.install_js('XT','Data','xtuple', $$
                     nkey
                   ]);
               } else {
-                toOneQuery = "select %1$I from %2$I where %3$I = $" + count;
+                toOneQuery = "select * from %2$I where %3$I = $" + count;
                 toOneSql = XT.format(toOneQuery, [
                     XT.Orm.primaryKey(iorm, true),
                     iorm.table,
