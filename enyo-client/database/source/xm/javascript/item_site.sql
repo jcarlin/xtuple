@@ -89,14 +89,14 @@ select xt.install_js('XM','ItemSite','xtuple', $$
           keySearch = param.value;
           sql1 += ' and t1.%4$I in (select item_id from item where item_number ~^ ${p1} or item_upccode ~^ ${p1}) ' +
             'union ' +
-            'select t1.* ' +
+            'select t1.%3$I ' +
             'from %1$I.%2$I t1 {joins} ' +
             ' join itemalias on t1.%4$I=itemalias_item_id ' +
             '   and itemalias_crmacct_id is null ' +
             'where {conditions} {extra} ' +
             ' and (itemalias_number ~^ ${p1}) ' +
             'union ' +
-            'select t1.* ' +
+            'select t1.%3$I ' +
             'from %1$I.%2$I t1 {joins} ' +
             ' join itemalias on t1.%4$I=itemalias_item_id ' +
             '   and itemalias_crmacct_id={accountId} ' +
