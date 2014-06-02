@@ -2,7 +2,8 @@
 newcap:true, noarg:true, regexp:true, undef:true, strict:true, trailing:true,
 white:true*/
 /*global XV:true, XT:true, _:true, console:true, XM:true, Backbone:true, require:true, assert:true,
-setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe:true, beforeEach:true */
+setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe:true,
+beforeEach:true, XG:true */
 
 (function () {
   "use strict";
@@ -10,7 +11,18 @@ setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe
   var async = require("async"),
     _ = require("underscore"),
     common = require("../lib/common"),
-    assert = require("chai").assert;
+    assert = require("chai").assert,
+    smoke = require("../lib/smoke"),
+    crud = require("../lib/crud");
+
+  var getDowDate = function (dow) {
+    var date = new Date(),
+      currentDow = date.getDay(),
+      distance = dow - currentDow;
+    date.setDate(date.getDate() + distance);
+
+    return date;
+  };
 
   //
   // Complicated business logic for quote and sales order saving
@@ -94,6 +106,8 @@ setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe
     @alias SalesOrder
   */
   var spec = {
+    skipSmoke: true,
+    skipCrud: true,
     recordType: "XM.SalesOrder",
     collectionType: "XM.SalesOrderListItemCollection",
     cacheName: null,
@@ -132,7 +146,8 @@ setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe
     },
     createHash: {
       customer: { number: "TTOYS" },
-      terms: { code: "2-10N30" }
+      terms: { code: "2-10N30" },
+      scheduleDate: getDowDate(1)
     },
     //
     // An extra bit of work we have to do after the createHash fields are set:
@@ -168,7 +183,8 @@ setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe
     }],
     updateHash: {
       orderNotes: "foo"
-    }
+    },
+    captureObject: true
   };
 
   var additionalTests = function () {
@@ -306,6 +322,7 @@ setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe
       });
     });
     describe("Sales order workflow", function () {
+      this.timeout(20000);
       var salesOrderModel,
         saleTypeModel,
         characteristicAssignment,
@@ -557,6 +574,91 @@ setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe
         salesOrderModel.set({saleType: null});
         salesOrderModel.get("workflow").reset([]);
         salesOrderModel.get("characteristics").reset([]);
+      });
+      /**
+        @member -
+        @memberof SalesOrder
+        @description If the Sales Order's Schedule Date changes, all the line item's schedule date
+          should change as well. If manufacturing enabled, the client will notify user if item's 
+          Schedule Date is not on the "Site Calendar" with message: "_nextWorkingDate?".loc()".
+      */
+      it("Changing the schedule date will update line item's schedule dates", function (done) {
+        crud.runAllCrud(spec);
+        smoke.runUICrud(spec);
+        //console.log(XG.capturedId);
+        done();
+        /*var orderNumber = "50271", //XG.capturedId,
+          workspaceContainer,
+          workspace,
+          postbooks = XT.app.$.postbooks,
+          navigator = smoke.navigateToList(XT.app, "XV.SalesOrderList"),
+          list = navigator.$.contentPanels.getActive(),
+          collection = list.value,
+          newScheduleDate = getDowDate(0),
+          notifyPopup,
+          changeScheduleDate = function (workspace) {
+            var model = workspace.value,
+              scheduleDate = model.get("scheduleDate"),
+              soLineScheduleDate = model.get("lineItems").models[0].get("scheduleDate"),
+              notifyPopup = postbooks.$.notifyPopup,
+              handleNotify = function () {
+                console.log("in handleNotify");
+                // Make sure it's showing. TODO - check *which* notify message is displayed
+                setTimeout(function () {
+                  console.log(postbooks.$.notifyPopup.showing);
+                }, 5000);
+                if (postbooks.$.notifyMessage.content === "Changing this date will update the Schedule Date on all editable line items. Do you want to continue?") {
+                  postbooks.notifyTap(null, {originator: {name: "notifyYes"}});
+                } else if (postbooks.$.notifyMessage.content === "The selected date is not a working day for the Site selected. Do you want to automatically select the next working day?") {
+                  postbooks.notifyTap(null, {originator: {name: "notifyNo"}});
+                }
+              };
+
+            //model.on('notify', handleNotify);
+            workspace.value.set("scheduleDate", newScheduleDate);
+            
+            setTimeout(function () {
+              console.log(postbooks.$.notifyPopup.showing);
+              console.log(postbooks.$.notifyMessage.content);
+              postbooks.notifyTap(null, {originator: {name: "notifyYes"}});
+              postbooks.notifyTap(null, {originator: {name: "notifyNo"}});
+              setTimeout(function () {
+                console.log(postbooks.$.notifyPopup.showing);
+                console.log(postbooks.$.notifyMessage.content);
+              }, 5000);
+            }, 2000);
+
+            setTimeout(function () {
+              console.log(postbooks.$.notifyPopup.showing);
+              console.log(postbooks.$.notifyMessage.content);
+              postbooks.notifyTap(null, {originator: {name: "notifyNo"}});
+            }, 5000);
+
+            setTimeout(function () {
+              postbooks.notifyTap(null, {originator: {name: "notifyNo"}});
+              console.log(soLineScheduleDate);
+              console.log(postbooks.$.notifyPopup.showing);
+              soLineScheduleDate = model.get("lineItems").models[0].get("scheduleDate");
+              //assert.equal(newScheduleDate, soLineScheduleDate);
+              done();
+            }, 5000);
+          },
+          isSalesOrderWorkspace = function () {
+            workspace = workspaceContainer.$.workspace;
+            assert.equal(workspace, "XV.SalesOrderWorkspace");
+            //assert.equal(workspace.value.id, orderNumber);
+            changeScheduleDate(workspace);
+          };
+
+        workspaceContainer = XT.app.$.postbooks.getActive();
+        assert.isDefined(workspaceContainer);
+        assert.equal(list, "XV.SalesOrderList");
+
+        navigator.doWorkspace({
+          workspace: list.getWorkspace(),
+          id: orderNumber,
+          success: isSalesOrderWorkspace
+        }); */
       });
       /**
         @member -
