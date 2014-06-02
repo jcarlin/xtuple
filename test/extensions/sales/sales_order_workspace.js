@@ -110,15 +110,7 @@
         });
       });
       it('adding a second line item should not copy the item', function (done) {
-        workspace.value.once("change:total", function () {
-          smoke.saveWorkspace(workspace, function (err, model) {
-            assert.isNull(err);
-            // TODO: sloppy
-            setTimeout(function () {
-              smoke.deleteFromList(XT.app, model, done);
-            }, 4000);
-          }, true);
-        });
+        workspace.value.once("change:total", done());
 
         gridRow.$.itemSiteWidget.$.privateItemSiteWidget.$.input.focus();
         // Add a new item, check that row exists, and make sure the itemSiteWidget doesn't copy irrelevantly
@@ -132,14 +124,23 @@
         gridRow.$.quantityWidget.doValueChange({value: 5});
         /* Delete the line item
         workspace.value.get("lineItems").models[1].destroy({
-              success: function () {
-                console.log("success");
-                gridBox.setEditableIndex(null);
-                gridBox.$.editableGridRow.hide();
-                gridBox.valueChanged();
-              }
-            });
+          success: function () {
+            console.log("success");
+            gridBox.setEditableIndex(null);
+            gridBox.$.editableGridRow.hide();
+            gridBox.valueChanged();
+          }
+        });
         */
+      });
+      it('save the Sales Order, then delete it from the list', function (done) {
+        smoke.saveWorkspace(workspace, function (err, model) {
+          assert.isNull(err);
+          // TODO: sloppy
+          setTimeout(function () {
+            smoke.deleteFromList(XT.app, model, done);
+          }, 4000);
+        }, true);
       });
     });
   });
