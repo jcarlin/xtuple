@@ -194,6 +194,30 @@ white:true*/
     },
 
     /**
+      Returns the (user pref) default printer if profiled. Some day, when Forms object exists, 
+      go look up those if no user preferences here.
+    */
+    defaultPrinter: function (modelName) {
+      var userPrintPref = _.isString(XT.session.preferences.getValue("PrintSettings")) ?
+            JSON.parse(XT.session.preferences.getValue("PrintSettings")) :
+            XT.session.preferences.getValue("PrintSettings"),
+        foundPrinter;
+
+      if (userPrintPref) {
+        foundPrinter = _.find(userPrintPref, function (val, key) {
+          /** 
+            PrintSettings object uses names, not model names i.e. SalesOrders, Invoices, etc.
+            TODO: What if the printer name doesn't match a real printer in CUPS? Return notify
+            popup error message and print in browser. Somehow need to go look at CUPS printers.
+          */
+          return ("XM." + key) === modelName;
+        });
+      }
+
+      return foundPrinter;
+    },
+
+    /**
       Returns the default site if profiled, otherwise returns
       the first alpha active selling site
     */
