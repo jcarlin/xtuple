@@ -67,7 +67,7 @@ regexp:true, undef:true, strict:true, trailing:true, white:true */
     var transformDataStructure = function (data) {
       // TODO: detailAttribute could be inferred by looking at whatever comes before the *
       // in the detailElements definition.
-
+      
       if (!reportDefinition.settings.detailAttribute) {
         // no children, so no transformation is necessary
         return [data];
