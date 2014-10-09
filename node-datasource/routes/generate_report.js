@@ -13,7 +13,7 @@ regexp:true, undef:true, strict:true, trailing:true, white:true */
     async = require("async"),
     fs = require("fs"),
     path = require("path"),
-    ipp = require("ipp"),
+    child_process = require("child_process"),
     Report = require('fluentreports').Report,
     qr = require('qr-image'),
     queryForData = require("./export").queryForData;
@@ -43,6 +43,7 @@ regexp:true, undef:true, strict:true, trailing:true, white:true */
       // TODO: introduce pseudorandomness (maybe a timestamp) to avoid collisions
       reportName = req.query.type.toLowerCase() + req.query.id + ".pdf",
       auxilliaryInfo = req.query.auxilliaryInfo,
+      printer = req.query.printer,
       workingDir = path.join(__dirname, "../temp", databaseName),
       reportPath = path.join(workingDir, reportName),
       imageFilenameMap = {},
@@ -310,25 +311,17 @@ regexp:true, undef:true, strict:true, trailing:true, white:true */
       Silent-print to a printer registered in the node-datasource.
      */
     var responsePrint = function (res, data, done) {
-      var printer = ipp.Printer(X.options.datasource.printer),
-        msg = {
-          "operation-attributes-tag": {
-            "job-name": "Silent Print",
-            "document-format": "application/pdf"
-          },
-          data: data
-        };
-
-      printer.execute("Print-Job", msg, function (error, result) {
-        if (error) {
-          X.log("Print error", error);
+      child_process.exec('lp -d ' + printer + ' ' + reportPath, function (error, stdout, stderr) {
+        if (error !== null) {
           res.send({isError: true, message: "Error printing"});
           done();
-        } else {
+        }
+        else {
           res.send({message: "Print Success"});
           done();
         }
       });
+
     };
 
     // Convenience hash to avoid if-else
