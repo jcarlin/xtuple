@@ -145,9 +145,9 @@ white:true*/
   XT.cacheCollection("XM.reasonCodes", "XM.ReasonCodeCollection");
   XT.cacheCollection("XM.vendorTypes", "XM.VendorTypeCollection");
 
-  /** 
+  /**
     Printable 'objects' for enyo UserPreferenceWorkspace to build PrintPicker components in create.
-    UserPreference backbone model also uses this to set meta attributes. 
+    UserPreference backbone model also uses this to set meta attributes.
 
     XXX: Avoid the need for this. To be replaced when Forms object created.
   */
@@ -157,7 +157,8 @@ white:true*/
     "PurchaseOrder": "Browser",
     "Location": "Browser",
     "EnterReceipt": "Browser",
-    "Shipment": "Browser"
+    "Shipment": "Browser",
+    "PostProduction": "Browser"
   };
 
   /**
