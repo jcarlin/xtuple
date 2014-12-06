@@ -33,7 +33,7 @@ regexp:true, undef:true, trailing:true, white:true, strict:false */
     kind: "XV.PickerWidget",
     onSelect: "itemSelected",
     showLabel: false,
-    prerender: false,
+    prerender: true,
     orderBy: [
       {attribute: 'name'}
     ],
