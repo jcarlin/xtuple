@@ -503,6 +503,7 @@
     "public/functions/getlasttrialbalid.sql",
     "public/functions/getlocationid.sql",
     "public/functions/getlotserialid.sql",
+    "public/functions/getoldestlocationid.sql",
     "public/functions/getopheadid.sql",
     "public/functions/getpacklistcharname.sql",
     "public/functions/getpacklistcharvalue.sql",

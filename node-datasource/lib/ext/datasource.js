@@ -242,7 +242,7 @@ Backbone:true, _:true, X:true, __dirname:true, exports:true, module: true */
 
             // Release the client from the pool.
             done();
-
+            console.log("query: ", query);
             // Call the call back.
             callback(err, result);
           };
