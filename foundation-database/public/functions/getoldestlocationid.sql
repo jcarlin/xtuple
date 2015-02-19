@@ -8,11 +8,12 @@ DECLARE
   
 BEGIN
 
-  SELECT obj_uuid INTO _locId
+  SELECT itemloc_id INTO _locId
   FROM itemloc
     LEFT JOIN lsdetail ON itemloc_ls_id = lsdetail_ls_id
   WHERE (itemloc_itemsite_id = pItemSiteId)
-  ORDER BY itemloc_expiration, lsdetail_created;
+  ORDER BY itemloc_expiration, lsdetail_created
+  LIMIT 1;
 
   RETURN _locId;
 
