@@ -38,7 +38,7 @@ return (function () {
           "from xt.poheadext join pohead on poheadext_id = pohead_id where poheadext_id = $1";
         parent = plv8.execute(parentIdSql, [NEW.poheadext_id])[0];
 
-        if (!sourceModel || !parentId) {
+        if (!sourceModel || !parent) {
           plv8.elog(WARNING, "Missing sourceModel and/or parentId needed to generate workflow!");
         }
         plv8.execute("SELECT xt.workflow_inheritsource($1, $2, $3, $4)",
