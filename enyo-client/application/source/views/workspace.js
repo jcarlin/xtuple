@@ -641,7 +641,15 @@ strict: false*/
           ]}
         ]}
       ]}
-    ]
+    ],
+    save: function () {
+      var orderModel = this.value.getValue("order"),
+        reportName = this.$.formPicker.value.getValue("reportName");
+
+      this.print({model: orderModel, reportName: reportName, printer: this.$.printer.value.id, module: "XM.Sales"});
+      this.doPrevious();
+      return;
+    }
   });
 
   XV.registerModelWorkspace("XM.PrintForm", "XV.PrintSalesOrderFormWorkspace");

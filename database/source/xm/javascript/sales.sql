@@ -1,3 +1,5 @@
+select xt.js_init(true);
+
 select xt.install_js('XM','Sales','xtuple', $$
 /* Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
    See www.xtuple.com/CPAL for the full text of the software license. */
@@ -182,6 +184,81 @@ select xt.install_js('XM','Sales','xtuple', $$
       "FROM form " +
       "WHERE form_name = $1";
     return plv8.execute(sql, [formName])[0].report_name;
+  };
+
+  XM.Sales.getPrintParameters = function (options) {
+    var docUuid = options.docUuid,
+      lineItemUuid = options.lineItemUuid,
+      docNumber = options.docNumber,
+      docType = options.docType,
+      formType = options.formType,
+      reportName = "CustOrderAcknowledgement",
+      docId,
+      sql,
+      tableName,
+      res,
+      parameters;
+    
+    if (docUuid) {
+      var sql1 = "SELECT tblname AS tblname " +
+        "FROM xt.obj_uuid WHERE obj_uuid = $1;",
+      sql2 = "SELECT {table}_id AS id " +
+        "FROM {table} WHERE obj_uuid = $1;";
+      
+      tableName = plv8.execute(sql1, [p.uuid])[0];
+      if (!tableName) {
+        return plv8.elog(ERROR, "UUID " + p.uuid + " not found in xt.obj_uuid table");
+      }
+      /* This could possibly be replaced with a query that doesn't depend on the xt.obj_uuid table */
+      docId = plv8.execute(sql2.replace(/{table}/g, tableName.tblname), [item.uuid])[0].id;
+    }
+
+    if (lineItemUuid) {
+      /* TODO - use tableName from above to figure out what table/column to query. */
+    }
+    if (docNumber && docType) {
+      switch (docType) {
+      case 'SO':
+          tableName = "cohead";
+          break;
+      case 'TO':
+          tableName = "tohead";
+          break;
+      }
+
+      sql = "SELECT {table}_id AS id, obj_uuid AS uuid " +
+        "FROM {table} WHERE {table}_number = $1;";
+      res = plv8.execute(sql.replace(/{table}/g, tableName), [docNumber])[0];
+      docId = res.id;
+    }
+
+    if (formType) {
+      if (!docUuid) {
+        plv8.elog(ERROR, "docUuid needed to call XM.Sales.findCustomerForm dispatch function");
+      }
+      /* formType: I, C, S, Q, P, L */ 
+      reportName = XM.Sales.findCustomerForm(docUuid, formType);
+    }
+
+    if (!docId) {
+      return plv8.elog(ERROR, "docId not found");
+    }
+    if (!reportName) {
+      return plv8.elog(ERROR, "reportName not found");
+    }
+    
+    parameters = {
+      id: docId, /* XXX - WHY?! just put it in enyo */
+      reportName: reportName,
+      printParameters: [
+        {name: "sohead_id", type: "integer", value: docId},
+        {name: "hide closed", type: "boolean", value: "true"}
+        /* Optional. TODO - What should determine warehouse id?
+        {name: "warehous_id", type: "integer", value: null} */
+      ]
+    };
+
+    return parameters;
   };
 
   /*
