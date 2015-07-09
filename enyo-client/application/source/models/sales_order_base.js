@@ -1347,7 +1347,7 @@ white:true*/
       return XM.Document.prototype.save.apply(this, arguments);
     },
 
-    validate: function () {
+    validate: function (attributes, options) {
       var that = this,
         quantity = this.get("quantity"),
         hasAltQuantity = _.contains(this.getAttributeNames(), this.altQuantityAttribute),
