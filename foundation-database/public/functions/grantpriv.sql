@@ -8,7 +8,7 @@ DECLARE
 
 BEGIN
 
-  SELECT usrpriv_id INTO _test
+  SELECT usrpriv_id  INTO _test
   FROM usrpriv
   WHERE ( (usrpriv_username=pUsername)
    AND (usrpriv_priv_id=pPrivid) );
@@ -35,7 +35,7 @@ CREATE OR REPLACE FUNCTION grantPriv(TEXT, TEXT) RETURNS BOOL AS $$
 DECLARE
   pUsername ALIAS FOR $1;
   pPrivname ALIAS FOR $2;
-  _test INTEGER;
+	_test INTEGER;
 
 BEGIN
 
@@ -61,4 +61,3 @@ BEGIN
 
 END;
 $$ LANGUAGE 'plpgsql';
-

@@ -73,7 +73,7 @@ WHERE true
   AND (cntct_id=<? value("cntct_id")?>)
 <? endif ?>
 <? if exists("crmacct_id") ?>
-  AND (crmacct_id=<? value("crmacct_id")?>)
+  AND ( (crmacct_id=<? value("crmacct_id")?>) OR (crmacct_parent_id=<? value("crmacct_id")?>) )
 <? endif ?>
 <? if exists("cntct_name_pattern") ?>
   AND (COALESCE(cntct_first_name,'') || ' ' || COALESCE(cntct_last_name,'') ~* <? value("cntct_name_pattern") ?>)

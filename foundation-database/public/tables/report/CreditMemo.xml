@@ -1,12 +1,18 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Return</title>
+ <title>Credit Memo</title>
  <name>CreditMemo</name>
- <description>Sales Module Return with Logo and CM Currency</description>
- <parameter default="" active="true" listtype="dynamic" type="string" name="cmhead_id" >
+ <description>Sales Module Credit Memo with Logo and CM Currency</description>
+ <parameter default="" listtype="dynamic" type="string" active="true" name="cmhead_id">
   <description></description>
   <query>select cmhead_id, cmhead_number from cmhead;</query>
  </parameter>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>28</topmargin>
@@ -54,27 +60,27 @@ ORDER BY cmhead_number;</sql>
        formatQty(cmitem_qtycredit) AS qtycredit,
        formatQty(cmitem_qtyreturned) AS qtyreturned,
        uom_name,
-       item_number,
-       item_descrip1,
+       COALESCE(item_number, cmitem_number) AS item_number,
+       COALESCE(item_descrip1, cmitem_descrip) AS item_descrip1,
        item_descrip2,
        formatSalesPrice(cmitem_unitprice) AS unitprice,
        formatMoney((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio)) AS extprice,
        cmitem_comments
-  FROM cmitem, itemsite, item, uom
- WHERE ((cmitem_itemsite_id=itemsite_id)
-   AND (itemsite_item_id=item_id)
-   AND (item_inv_uom_id=uom_id)
-   AND (cmitem_cmhead_id=&lt;? value("cmhead_id") ?>))
+  FROM cmitem
+  LEFT OUTER JOIN itemsite ON (cmitem_itemsite_id=itemsite_id)
+  LEFT OUTER JOIN item ON (itemsite_item_id=item_id)
+  LEFT OUTER JOIN uom ON (item_inv_uom_id=uom_id)
+WHERE (cmitem_cmhead_id=&lt;? value("cmhead_id") ?>)
 ORDER BY cmitem_linenumber;</sql>
  </querysource>
  <querysource>
   <name>GroupFoot</name>
   <sql>SELECT formatExtPrice(SUM((cmitem_qtycredit * cmitem_qty_invuomratio) * cmitem_unitprice / cmitem_price_invuomratio)) AS extprice
-  FROM cmhead, cmitem, itemsite, item
- WHERE ((cmitem_cmhead_id=cmhead_id)
-   AND (cmitem_itemsite_id=itemsite_id)
-   AND (itemsite_item_id=item_id)
-   AND (cmhead_id=&lt;? value("cmhead_id") ?>));</sql>
+  FROM cmhead 
+  LEFT OUTER JOIN cmitem ON (cmitem_cmhead_id=cmhead_id)
+  LEFT OUTER JOIN itemsite ON (cmitem_itemsite_id=itemsite_id)
+  LEFT OUTER JOIN item ON (itemsite_item_id=item_id)
+WHERE (cmhead_id=&lt;? value("cmhead_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>GroupExtended</name>
@@ -110,6 +116,19 @@ WHERE ((image_name='logo'));</sql>
  <pghead>
   <firstpage/>
   <height>451</height>
+  <image>
+   <rect>
+    <x>270</x>
+    <y>0</y>
+    <width>355</width>
+    <height>111</height>
+   </rect>
+   <mode>stretch</mode>
+   <data>
+    <query>logo</query>
+    <column>image_data</column>
+   </data>
+  </image>
   <field>
    <rect>
     <x>50</x>
@@ -549,19 +568,6 @@ WHERE ((image_name='logo'));</sql>
     <column>f_shiptoaddr</column>
    </data>
   </text>
-  <image>
-   <rect>
-    <x>270</x>
-    <y>0</y>
-    <width>355</width>
-    <height>111</height>
-   </rect>
-   <mode>stretch</mode>
-   <data>
-    <query>logo</query>
-    <column>image_data</column>
-   </data>
-  </image>
   <label>
    <rect>
     <x>535</x>
@@ -646,7 +652,7 @@ WHERE ((image_name='logo'));</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Return</string>
+   <string>Credit Memo</string>
   </label>
   <field>
    <rect>

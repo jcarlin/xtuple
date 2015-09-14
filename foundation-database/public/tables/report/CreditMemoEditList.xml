@@ -3,6 +3,12 @@
  <title>Return Edit List</title>
  <name>CreditMemoEditList</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -47,7 +53,7 @@ ORDER BY ordernumber, linenumber;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Return Edit List</string>
+   <string>Credit Memo Edit List</string>
   </label>
   <label>
    <rect>
