@@ -11,6 +11,7 @@ regexp:true, undef:true, strict:true, trailing:true, white:true */
     checkDependencies,
     cleanse,
     dependenciesFor,
+    directoryFiles,
     dive,
     existing,
     findExisting,
@@ -197,15 +198,67 @@ regexp:true, undef:true, strict:true, trailing:true, white:true */
   };
 
   /**
+    Directory Files.
+
+    TODO: This was moved from the old xt/foundation/filesystem.js
+    refactor to remove the need for it.
+
+    @param {String} path
+    @param {Object} options
+    @param {Function} callback
+   */
+  directoryFiles = function (path, options, callback) {
+    var files;
+    if (options) {
+      if (X.typeOf(options) === X.T_FUNCTION) {
+        callback = options;
+        options = {};
+      }
+    } else if (X.none(options)) options = {};
+
+    path = X.path.normalize(path);
+
+    try {
+      if (X.typeOf(callback) !== X.T_FUNCTION) {
+        files = fs.readdirSync(path);
+        if (options.extension) {
+          files = X.reduce(files, options.extension);
+        }
+        return options.fullPath ? files.map(function (file) {
+          return X.path.join(path, file);
+        }) : files;
+      } else {
+        _fs.readdir(path, function (err, files) {
+          if (options.extension) {
+            files = X.reduce(files, options.extension);
+          }
+          callback(options.fullPath ? files.map(function (file) {
+            return X.path.join(path, file);
+          }) : files);
+        });
+      }
+    } catch (err) {
+      X.warn(err);
+      if (X.typeOf(callback) === X.T_FUNCTION) {
+        callback([]);
+      } else { return []; }
+    }
+  };
+
+  /**
     Recurse into the file structure to parse the json files.
    */
   dive = function (path, root) {
-    var files = X.directoryFiles(path, {fullPath: true}),
+    var files = directoryFiles(path, {fullPath: true}),
       stat,
       isTop,
       ret,
       content,
-      errors = [];
+      errors = [],
+      ext = function (path) {
+        var ext = X.path.extname(path);
+        return ext.length > 1 ? ext.slice(1) : ext;
+      };
 
     isTop = root ? false : true;
     _.each(files, function (file) {
@@ -213,7 +266,7 @@ regexp:true, undef:true, strict:true, trailing:true, white:true */
       if (stat.isDirectory()) {
         // we'll be populating this root object in the recursion with empty keys
         dive(file, root ? root : (root = {}));
-      } else if (X.ext(file) === "json" || X.ext(file) === "js") {
+      } else if (ext(file) === "json" || ext(file) === "js") {
         root[file] = "";
       }
     });

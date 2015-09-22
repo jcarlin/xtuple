@@ -191,8 +191,15 @@ trailing:true, white:true, strict: false*/
         message: "_reassignSelectedActivities".loc(),
         yesLabel: "_reassign".loc(),
         noLabel: "_cancel".loc(),
-        component: {kind: "XV.UserAccountWidget", name: "assignTo", label: "_assignTo".loc(),
-          menuDisabled: true},
+        component: {kind: "XV.UserPicker", name: "assignTo", showLabel: false,
+          filter: function (models) {
+            var activeUsers = _.filter(models, function (usr) {
+              return usr.getValue("isActive");
+            });
+            // TODO - only return "warehouse" users.
+            return activeUsers;
+          }
+        },
         options: {models: this.selectedModels()}
       });
     },

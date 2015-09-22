@@ -1,16 +1,6 @@
 /*jshint node:true, indent:2, curly:false, eqeqeq:true, immed:true, latedef:true, newcap:true, noarg:true,
 regexp:true, undef:true, strict:true, trailing:true, white:true */
-/*global X:true, issue:true */
-
-//........................................
-// DEFINE GLOBAL FUNCTION
-//
-issue = function () {
-  "use strict";
-  var args = X.$A(arguments);
-  if (args.length <= 0) return;
-  X.exception.handle(args[0]);
-};
+/*global X:true */
 
 (function () {
   "use strict";

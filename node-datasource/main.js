@@ -20,6 +20,7 @@ var express = require('express'),
 
   var options = require("./lib/options"),
     authorizeNet,
+    fs = require('fs'),
     schemaSessionOptions = {},
     privSessionOptions = {};
 
@@ -54,9 +55,9 @@ var express = require('express'),
 
   // Load other xTuple libraries using X.depends above.
   require("backbone-relational");
-  X.relativeDependsPath = X.path.join(X.basePath, "../lib/tools/source");
+  X.relativeDependsPath = X.path.join(process.cwd(), "../lib/tools/source");
   require("../lib/tools");
-  X.relativeDependsPath = X.path.join(X.basePath, "../lib/backbone-x/source");
+  X.relativeDependsPath = X.path.join(process.cwd(), "../lib/backbone-x/source");
   require("../lib/backbone-x");
   Backbone.XM = XM;
 
@@ -431,6 +432,7 @@ app.configure(function () {
 
   // gzip all static files served.
   app.use(express.compress());
+
   // Add a basic view engine that will render files from "views" directory.
   app.set('view engine', 'ejs');
 

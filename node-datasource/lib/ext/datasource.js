@@ -53,7 +53,6 @@ Backbone:true, _:true, X:true, __dirname:true, exports:true, module: true */
       init: function () {
         var that = this;
 
-        X.addCleanupTask(_.bind(this.cleanup, this), this);
         X.pg.defaults.poolSize = this.poolSize;
 
         if (X.options && X.options.datasource && X.options.datasource.pgWorker) {
@@ -136,17 +135,17 @@ Backbone:true, _:true, X:true, __dirname:true, exports:true, module: true */
       */
       connected: function (query, options, callback, err, client, done) {
         // WARNING!!! If you make any changes here, please update pg_worker.js as well.
-        var that = this,
-          queryCallback,
-          errorHandlerCount = EventEmitter.listenerCount(client.connection, 'error'),
-          noticeHandlerCount = EventEmitter.listenerCount(client.connection, 'notice');
-
         if (err) {
-          issue(X.warning("Failed to connect to database: " +
+          X.exception.handle(X.warning("Failed to connect to database: " +
             "{host}:{port}/{database} => %@".f(options, err.message)));
           done();
           return callback(err);
         }
+
+        var that = this,
+          queryCallback,
+          errorHandlerCount = EventEmitter.listenerCount(client.connection, 'error'),
+          noticeHandlerCount = EventEmitter.listenerCount(client.connection, 'notice');
 
         client.status = [];
         client.debug = [];

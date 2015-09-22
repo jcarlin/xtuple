@@ -921,14 +921,6 @@ return (function () {
         if(DEBUG) XT.debug('loading javascript for type->', res[i].js_type);
 
         eval(res[i].javascript);
-
-        var ns = eval(res[i].js_namespace);
-        if (ns && ns[js_type]) {
-          if (Object.isFrozen(ns[js_type])) {
-            plv8.elog(WARNING, 'object already frozen: '+ ns + '.' + js_type);
-          }
-          Object.freeze(ns[js_type]);
-        }
       }
     }
     plv8.__initialized = true;
