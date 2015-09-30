@@ -28,7 +28,7 @@ return (function () {
        row.acttype_col_assigned_date + " as act_assigned_date, " +
        row.acttype_col_completed_date + " as act_completed_date, " +
        row.acttype_col_parent_uuid + " as act_parent_uuid, " +
-       (row.acttype_col_action || 'null') + " as act_action " +
+       row.acttype_col_action + " as act_action " +
        "from " + row.acttype_nsname + "." + row.acttype_tblname;
      if (row.acttype_join) {
        sql = sql + " " + row.acttype_join;

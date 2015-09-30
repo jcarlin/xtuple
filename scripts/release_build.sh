@@ -249,6 +249,15 @@ cp scripts/output/manufacturing_upgrade.sql scripts/output/manufacturing-install
 cd scripts/output
 tar -zcvf manufacturing-install-$MAJ$MIN$PAT.gz manufacturing-install-$MAJ$MIN$PAT/
 
+#add-manufacturing-to-dist
+cd ${XTUPLEDIR}
+mkdir scripts/output/add-manufacturing-to-distribution-$MAJ$MIN$PAT
+cp scripts/xml/xtmfg_install_to_dist.xml scripts/output/add-manufacturing-to-distribution-$MAJ$MIN$PAT/package.xml
+cp scripts/output/manufacturing_basic_install.sql scripts/output/add-manufacturing-to-distribution-$MAJ$MIN$PAT
+cp scripts/output/manufacturing_upgrade.sql scripts/output/add-manufacturing-to-distribution-$MAJ$MIN$PAT
+cd scripts/output
+tar -zcvf add-manufacturing-to-distribution-$MAJ$MIN$PAT.gz add-manufacturing-to-distribution-$MAJ$MIN$PAT/
+
 #enterprise upgrade
 cd ${XTUPLEDIR}
 mkdir scripts/output/enterprise-upgrade-$MAJ$MIN$PAT
@@ -317,6 +326,7 @@ rm -rf scripts/output/commercialcore_basic_install.sql
 rm -rf scripts/output/commercialcore_upgrade.sql
 rm -rf scripts/output/manufacturing-install-$MAJ$MIN$PAT/
 rm -rf scripts/output/manufacturing-upgrade-$MAJ$MIN$PAT/
+rm -rf scripts/output/add-manufacturing-to-distribution-$MAJ$MIN$PAT/
 rm -rf scripts/output/enterprise-upgrade-$MAJ$MIN$PAT/
 rm -rf scripts/output/enterprise-install-$MAJ$MIN$PAT/
 rm -rf scripts/output/manufacturing_basic_install.sql

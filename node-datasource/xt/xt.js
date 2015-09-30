@@ -44,10 +44,6 @@ XT = { };
       "\n%@ CAUGHT - cleaning up before shutting down".f(signal.toUpperCase()) +
       "\n================================================"
     );
-    // this is a workaround. We want to be able to dictate the exit code. As a convention
-    // we'll say that SIGKILL is the error exit code of 1 and all the rest are the normal
-    // error code of 0
-    X.cleanup(signal === 'SIGKILL');
   };
 
   // the first method to run once the framework has been told it is
@@ -64,54 +60,5 @@ XT = { };
     );
 
     require("./database");
-
-    X.pid = process.pid;
-
-    // must explicitly be set to false for it to know you do not want
-    // a pidfile!
-    if (X.pidFile !== false) {
-      if (!X.pidFilePath) {
-        X.pidFilePath = "%@/pid".f(X.basePath);
-      } else if (X.pidFilePath.indexOf(X.basePath) === -1) {
-        X.pidFilePath = _path.join(X.basePath, X.pidFilePath);
-      }
-      if (!X.pidFileName) {
-        X.pidFileName = "%@.pid".f(X.options.processName ? X.options.processName: "node_xt_process");
-      } else if (X.pidFileName.indexOf(".pid") === -1) {
-        X.pidFileName = X.pidFileName.suf(".pid");
-      }
-
-      // if we're allowed to have multiples of this resource executing
-      // simultaneously we need to make the name unique
-      if (X.options.allowMultipleInstances === true) {
-        i = X.pidFileName.indexOf(".pid");
-        sub = X.pidFileName.substring(0, i);
-        X.pidFileName = "%@_%@.pid".f(sub, X.pid);
-      }
-
-      // keep track of the actual pidfile full path
-      X.pidFile = _path.join(X.pidFilePath, X.pidFileName);
-
-      X.exists(X.pidFile, function (exists) {
-        if (exists && !X.options.allowMultipleInstances) {
-          X.error("Multiple instances are not allowed");
-        } else {
-
-          // write our pidfile...
-          X.exists(_path.join(X.pidFilePath), function (exists) {
-            if (!exists) {
-              X.createDir(X.pidFilePath, X.writePidFile);
-            }
-            else {
-              X.writePidFile();
-            }
-          });
-        }
-      });
-    }
-
-    // give any running process the opportunity to save state
-    // or log as gracefully as possible
-    process.once('exit', _.bind(X.cleanup, X));
   });
 }());

@@ -16,17 +16,18 @@ BEGIN
       VALUES (_module, _comment, _descr) 
       RETURNING source_id INTO _cmntid;
 
-  INSERT INTO cmnttypesource (cmnttypesource_cmnttype_id, cmnttypesource_source_id)
+    INSERT INTO cmnttypesource (cmnttypesource_cmnttype_id, cmnttypesource_source_id)
   	VALUES (1, _cmntid);  -- General Comments
-  INSERT INTO cmnttypesource (cmnttypesource_cmnttype_id, cmnttypesource_source_id)
+    INSERT INTO cmnttypesource (cmnttypesource_cmnttype_id, cmnttypesource_source_id)
 	  VALUES (2, _cmntid);  -- ChangeLog Comments
-  
+  ELSE
+    RETURN false;
   END IF;
 
   RETURN true;
 
 END;
 
-$$ language 'plpgsql';
+$$ language plpgsql;
 
 

@@ -40,12 +40,6 @@ X = {};
   X.$P = function () { return this; };
 
   /**
-   Returns an empty object
-   @returns {Object} An empty object
-   */
-  X.$K = function () {};
-
-  /**
     Returns the input as an array
 
     @param obj Any object or array
@@ -350,12 +344,6 @@ X = {};
       }
     },
 
-    addCleanupTask: function (task, context) {
-      var queue = this.cleanupQueue || (this.cleanupQueue = []);
-      task = X.CleanupTask.create({ task: task, context: context });
-      queue.unshift(task);
-    },
-
     addProperties: function (base) {
       var args, value, part, i = 0;
       args = X.$A(arguments).slice(1);
@@ -368,18 +356,6 @@ X = {};
         } else { part = part[args[i]]; }
       }
       return base;
-    },
-
-    writePidFile: function () {
-      X.log("Writing pid file '%@'".f(X.pidFileName));
-      X.writeFile(X.pidFile, X.pid);
-      X.addCleanupTask(X.cleanupPidFile);
-    },
-
-    cleanupPidFile: function () {
-      if (!X.pidFile) return;
-      X.log("Removing pid file.");
-      X.removeFile(X.pidFile);
     },
 
     setup: function (options) {
@@ -401,16 +377,5 @@ X = {};
   require("./object");
   require("./io");
   require("./exception");
-  require("./filesystem");
-  require("./ext/cleanup_task");
-
-  (function () {
-    var options = "version.txt node_modules/xt/version.txt".w(), i = 0, path;
-    for (; i < options.length && X.none(X.version); ++i) {
-      path = _path.join(X.basePath, options[i]);
-      if (X.exists(path)) X.version = X.readFile(path);
-    }
-    if (X.none(X.version)) X.version = "UNKNOWN";
-  }());
 
 }());

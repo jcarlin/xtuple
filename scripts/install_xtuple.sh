@@ -170,7 +170,7 @@ install_packages() {
     # the path alias to it.
     log "npm version:"
     npm -v
-    npm install npm@latest
+    npm install npm@2.x
     rm -rf ~/.nvm/v${NODE_VERSION}/bin/npm
     ln -s ~/node_modules/.bin/npm ~/.nvm/v${NODE_VERSION}/bin/npm
     # Reset bash's cache.
@@ -178,7 +178,7 @@ install_packages() {
     log "npm version:"
     npm -v
   else
-    sudo npm install -fg npm@latest
+    sudo npm install -fg npm@2.x
   fi
 
   # npm no longer supports its self-signed certificates

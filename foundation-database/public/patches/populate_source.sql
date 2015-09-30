@@ -824,7 +824,8 @@ select createDoctype(NULL, --pDocAssNum
                      '', --pPriv
                      'Sales' --pModule
 );
-select createDoctype(NULL, --pDocAssNum
+
+SELECT createDoctype(NULL, --pDocAssNum
                      'PR', --pType
                      '', --pDocAss
                      'PR', --pCharAss
@@ -841,3 +842,7 @@ select createDoctype(NULL, --pDocAssNum
                      'MaintainPurchaseRequests ViewPurchaseRequests', --pPriv
                      'Purchase' --pModule
 );
+
+-- Exchange Rate Comment Type & Source
+SELECT xt.add_comment_type('System', 'FX', 'Exchange Rates');
+

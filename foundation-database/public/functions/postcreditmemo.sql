@@ -1,6 +1,6 @@
 
 CREATE OR REPLACE FUNCTION postCreditMemo(INTEGER, INTEGER) RETURNS INTEGER AS $$
--- Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple. 
+-- Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple. 
 -- See www.xtuple.com/CPAL for the full text of the software license.
 DECLARE
   pCmheadid ALIAS FOR $1;
@@ -18,7 +18,7 @@ $$ LANGUAGE 'plpgsql';
 
 
 CREATE OR REPLACE FUNCTION postCreditMemo(INTEGER, INTEGER, INTEGER) RETURNS INTEGER AS $$
--- Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple. 
+-- Copyright (c) 1999-2015 by OpenMFG LLC, d/b/a xTuple. 
 -- See www.xtuple.com/CPAL for the full text of the software license.
 DECLARE
   pCmheadid ALIAS FOR $1;
@@ -111,20 +111,23 @@ BEGIN
     AND (_p.cmhead_docdate BETWEEN curr_effective 
                            AND curr_expires) );
 
--- Process line items
+-- Process Non-Misc. C/M Items
 -- Always use std cost
   FOR _r IN SELECT *, stdCost(item_id) AS std_cost
             FROM creditmemoitem
             WHERE ( (cmitem_cmhead_id=pCmheadid)
-              AND   (cmitem_qtycredit <> 0 ) ) LOOP
+              AND   (cmitem_qtycredit <> 0 )
+              AND   (cmitem_itemsite_id IS NOT NULL ) ) LOOP
 
---  Calcuate the Commission to be debited
+--  Calculate the Commission to be debited
     _commissionDue := (_commissionDue + (_r.extprice * _p.cmhead_commission));
 
     IF (_r.extprice <> 0) THEN
 --  Debit the Sales Account for the current cmitem
       SELECT insertIntoGLSeries( _sequence, 'A/R', 'CM', _p.cmhead_number,
-                                 CASE WHEN _p.cmhead_rahead_id IS NULL THEN
+                                 CASE WHEN (_r.cmitem_rev_accnt_id IS NOT NULL) THEN
+                                   getPrjAccntId(_p.cmhead_prj_id, _r.cmitem_rev_accnt_id)
+                                 WHEN (_p.cmhead_rahead_id IS NULL) THEN
                                    getPrjAccntId(_p.cmhead_prj_id, salesaccnt_credit_accnt_id)
                                  ELSE
                                    getPrjAccntId(_p.cmhead_prj_id, salesaccnt_returns_accnt_id)
@@ -192,6 +195,86 @@ BEGIN
 
   END LOOP;
 
+--  March through the Misc. C/M Items
+  FOR _r IN SELECT *
+            FROM creditmemoitem
+            JOIN salescat ON (salescat_id = cmitem_salescat_id)
+            WHERE ( (cmitem_cmhead_id=pCmheadid)
+              AND   (cmitem_qtycredit <> 0 )
+              AND   (cmitem_itemsite_id IS NULL ) ) LOOP
+
+--  Calculate the Commission to be debited
+    _commissionDue := (_commissionDue + (_r.extprice * _p.cmhead_commission));
+
+    IF (_r.extprice <> 0) THEN
+--  Debit the Sales Account for the current cmitem
+      SELECT insertIntoGLSeries( _sequence, 'A/R', 'CM', _p.cmhead_number,
+                                 getPrjAccntId(_p.cmhead_prj_id, 
+                                 COALESCE(_r.cmitem_rev_accnt_id,_r.salescat_sales_accnt_id)), 
+                                 round(currToBase(_p.cmhead_curr_id,
+                                                _r.extprice * -1,
+                                                _p.cmhead_docdate), 2),
+                                 _glDate, _p.cmhead_billtoname ) INTO _test;
+      IF (_test < 0) THEN
+        PERFORM deleteGLSeries(_sequence);
+        RAISE EXCEPTION 'Could not debit the sales account for the credit memo line item [xtuple: postcreditmemo, -12, %1, %2]',
+          _p.cmhead_number, _r.cmitem_itemsite_id;
+      END IF;
+
+    END IF;
+
+--  Record Sales History for this Misc. C/M Item
+    SELECT nextval('cohist_cohist_id_seq') INTO _cohistid;
+    INSERT INTO cohist
+    ( cohist_id, cohist_cust_id, cohist_itemsite_id, cohist_shipto_id,
+      cohist_misc_type, cohist_misc_descrip,
+      cohist_shipdate, cohist_shipvia,
+      cohist_ordernumber, cohist_ponumber, cohist_orderdate,
+      cohist_doctype, cohist_invcnumber, cohist_invcdate,
+      cohist_qtyshipped, cohist_unitprice, cohist_unitcost,
+      cohist_salesrep_id, cohist_commission, cohist_commissionpaid,
+      cohist_billtoname, cohist_billtoaddress1,
+      cohist_billtoaddress2, cohist_billtoaddress3,
+      cohist_billtocity, cohist_billtostate, cohist_billtozip,
+      cohist_shiptoname, cohist_shiptoaddress1,
+      cohist_shiptoaddress2, cohist_shiptoaddress3,
+      cohist_shiptocity, cohist_shiptostate, cohist_shiptozip,
+      cohist_curr_id, cohist_taxtype_id, cohist_taxzone_id,
+      cohist_shipzone_id, cohist_saletype_id )
+    VALUES
+    ( _cohistid, _p.cmhead_cust_id, _r.cmitem_itemsite_id, _p.cmhead_shipto_id,
+      'M', (_r.cmitem_number || '-' || _r.cmitem_descrip),
+      _p.cmhead_docdate, '',
+      _p.cmhead_number, _p.cmhead_custponumber, _p.cmhead_docdate,
+      'C', _p.cmhead_invcnumber, _p.cmhead_docdate,
+      (_r.qty * -1), _r.unitprice, 0,
+      _p.cmhead_salesrep_id, (_p.cmhead_commission * _r.extprice * -1), FALSE,
+      _p.cmhead_billtoname, _p.cmhead_billtoaddress1,
+      _p.cmhead_billtoaddress2, _p.cmhead_billtoaddress3,
+      _p.cmhead_billtocity, _p.cmhead_billtostate, _p.cmhead_billtozip,
+      _p.cmhead_shipto_name, _p.cmhead_shipto_address1,
+      _p.cmhead_shipto_address2, _p.cmhead_shipto_address3,
+      _p.cmhead_shipto_city, _p.cmhead_shipto_state, _p.cmhead_shipto_zipcode,
+      _p.cmhead_curr_id, _r.cmitem_taxtype_id, _p.cmhead_taxzone_id,
+      _p.cmhead_shipzone_id, _p.cmhead_saletype_id );
+    INSERT INTO cohisttax
+    ( taxhist_parent_id, taxhist_taxtype_id, taxhist_tax_id,
+      taxhist_basis, taxhist_basis_tax_id, taxhist_sequence,
+      taxhist_percent, taxhist_amount, taxhist_tax,
+      taxhist_docdate, taxhist_distdate, taxhist_curr_id, taxhist_curr_rate,
+      taxhist_journalnumber )
+    SELECT _cohistid, taxhist_taxtype_id, taxhist_tax_id,
+           taxhist_basis, taxhist_basis_tax_id, taxhist_sequence,
+           taxhist_percent, taxhist_amount, taxhist_tax,
+           taxhist_docdate, taxhist_distdate, taxhist_curr_id, taxhist_curr_rate,
+           taxhist_journalnumber 
+    FROM cmitemtax
+    WHERE (taxhist_parent_id=_r.cmitem_id);
+
+    _totalAmount := _totalAmount + round(_r.extprice, 2);
+    
+  END LOOP;
+  
 --  Credit the Misc. Account for Miscellaneous Charges
   IF (_p.cmhead_misc <> 0) THEN
     SELECT insertIntoGLSeries( _sequence, 'A/R', 'CM', _p.cmhead_number,
@@ -527,5 +610,5 @@ BEGIN
   RETURN _itemlocSeries;
 
 END;
-$$ LANGUAGE 'plpgsql';
+$$ LANGUAGE plpgsql;
 

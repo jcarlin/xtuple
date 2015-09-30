@@ -23,7 +23,7 @@ X.Logger = X.Object.extend(/** @lends X.Logger */ {
 
       }
     } catch (err) {
-      issue(X.fatal("Could not find path to log files", err));
+      X.exception.handle(X.fatal("Could not find path to log files", err));
     }
   }
 

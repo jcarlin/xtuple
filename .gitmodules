@@ -58,3 +58,6 @@
 [submodule "node-datasource/lib/moment"]
 	path = node-datasource/lib/moment
 	url = https://github.com/moment/moment.git
+[submodule "lib/enyo-x/lib/Font-Awesome"]
+	path = lib/enyo-x/lib/Font-Awesome
+	url = https://github.com/FortAwesome/Font-Awesome.git
