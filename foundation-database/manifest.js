@@ -246,6 +246,7 @@
     "public/functions/createinvoiceconsolidated.sql",
     "public/functions/createinvoices.sql",
     "public/functions/createitemuomconv.sql",
+    "public/functions/createitemlocdistseries.sql",
     "public/functions/createmiscapcheck.sql",
     "public/functions/createpkgschema.sql",
     "public/functions/createpr.sql",
