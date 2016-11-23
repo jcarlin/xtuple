@@ -1,7 +1,6 @@
 DROP FUNCTION IF EXISTS postInvTrans(INTEGER, TEXT, NUMERIC, TEXT, TEXT, TEXT, TEXT, TEXT, INTEGER, INTEGER, INTEGER, TIMESTAMP WITH TIME ZONE, NUMERIC, INTEGER);
 DROP FUNCTION IF EXISTS postInvTrans(INTEGER, TEXT, NUMERIC, TEXT, TEXT, TEXT, TEXT, TEXT, INTEGER, INTEGER, INTEGER, TIMESTAMP WITH TIME ZONE, NUMERIC, INTEGER, NUMERIC);
 
-postinvtrans(integer, text, numeric, text, text, text, text, text, integer, integer, integer, timestamp with time zone, numeric, boolean) 
 CREATE OR REPLACE FUNCTION postInvTrans(pItemsiteId    INTEGER,
                                         pTransType     TEXT,
                                         pQty           NUMERIC,
