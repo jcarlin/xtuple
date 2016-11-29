@@ -1,4 +1,4 @@
-select xt.install_js('XT', 'EDIProfile', 'xtuple',  $$
+select xt.install_js('XT', 'EDIProfile', 'xtuple',  $parser$
 
 /**
  * WARNING!!! IMPORTANT!!! README!!!
@@ -749,4 +749,4 @@ XT.EDIProfile.parser = (function() {
 
 })();
 
-$$ );
+$parser$ );

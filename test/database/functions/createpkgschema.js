@@ -1,16 +1,25 @@
 var _      = require('underscore'),
-    assert = require('chai').assert;
+    assert = require('chai').assert,
+    dblib  = require('../dblib');
 
 (function () {
   'use strict';
   describe('createpkgschema()', function () {
 
-    var loginData  = require('../../lib/login_data.js').data,
-        datasource = require('../../../node-datasource/lib/ext/datasource').dataSource,
-        config     = require('../../../node-datasource/config.js'),
-        creds      = _.extend({}, config.databaseServer,
-                              { database: loginData.org }),
+    var datasource = dblib.datasource,
+        creds      = dblib.adminCred,
         firstOid   = -1;
+
+    it('needs no existing pkg to test properly', function (done) {
+      var sql = "select exists(select 1 from pkghead"   +
+                "               where pkghead_name = 'test') as result;";
+      datasource.query(sql, creds, function (err, res) {
+        assert.isNull(err);
+        assert.equal(res.rowCount, 1);
+        assert.isFalse(res.rows[0].result);
+        done();
+      })
+    });
 
     it('should create a schema', function (done) {
       var sql = "select createpkgschema('test', 'test comment') as soid;";
@@ -29,16 +38,26 @@ var _      = require('underscore'),
                 " where nspname = 'test';";
       datasource.query(sql, creds, function (err, res) {
         assert.isNull(err);
-        assert.isObject(_.find(res.rows, function (e) { return e.relname === 'pkgcmd';     }), "pkgcmd");
-        assert.isObject(_.find(res.rows, function (e) { return e.relname === 'pkgcmdarg';  }), "pkgcmdarg");
-        assert.isObject(_.find(res.rows, function (e) { return e.relname === 'pkgimage';   }), "pkgimage");
-        assert.isObject(_.find(res.rows, function (e) { return e.relname === 'pkgmetasql'; }), "pkgmetasql");
-        assert.isObject(_.find(res.rows, function (e) { return e.relname === 'pkgpriv';    }), "pkgpriv");
-        assert.isObject(_.find(res.rows, function (e) { return e.relname === 'pkgreport';  }), "pkgreport");
-        assert.isObject(_.find(res.rows, function (e) { return e.relname === 'pkgscript';  }), "pkgscript");
-        assert.isObject(_.find(res.rows, function (e) { return e.relname === 'pkguiform';  }), "pkguiform");
+        _.each([ "pkgcmd",    "pkgcmdarg", "pkgimage", "pkgmetasql", "pkgpriv",
+                 "pkgreport", "pkgscript", "pkguiform" ],
+               function (table) {
+                 assert.isObject(_.find(res.rows, function (row) {
+                   return row.relname === table;
+                 }), table);
+              });
         done();
       });
+    });
+
+    it('should have created a pkghead record', function (done) {
+      var sql = "select count(*) as result from pkghead"   +
+                " where pkghead_name = 'test';";
+      datasource.query(sql, creds, function (err, res) {
+        assert.isNull(err);
+        assert.equal(res.rowCount, 1);
+        assert.equal(res.rows[0].result, 1);
+        done();
+      })
     });
 
     it('should be idempotent', function (done) {
@@ -46,9 +65,20 @@ var _      = require('underscore'),
       datasource.query(sql, creds, function (err, res) {
         assert.isNull(err);
         assert.equal(firstOid, res.rows[0].soid);
-        assert.isTrue(firstOid >= 0);
+        assert.operator(firstOid, ">=", 0);
         done();
       });
+    });
+
+    it('should not have created a second pkghead record', function (done) {
+      var sql = "select count(*) as result from pkghead"   +
+                " where pkghead_name = 'test';";
+      datasource.query(sql, creds, function (err, res) {
+        assert.isNull(err);
+        assert.equal(res.rowCount, 1);
+        assert.equal(res.rows[0].result, 1);
+        done();
+      })
     });
 
     after(function (done) {

@@ -116,8 +116,6 @@ CREATE OR REPLACE RULE "_UPDATE" AS
           'A'
         WHEN NEW.funds_type='Discover Card' THEN
           'D'
-        WHEN NEW.funds_type='Other Credit Card' THEN
-          'R'
         WHEN NEW.funds_type='Cash' THEN
           'K'
         WHEN NEW.funds_type='Wire Transfer' THEN

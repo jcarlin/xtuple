@@ -43,7 +43,16 @@ SELECT wo_id,
                        WHEN ('S') THEN <? value("so") ?>
                        WHEN ('Q') THEN <? value("quote") ?>
                        ELSE '?'
-       END AS wo_ordtype_qtdisplayrole
+       END AS wo_ordtype_qtdisplayrole,
+
+       0 AS wo_wipvalue_xttotalrole,
+       woplancost(wo_id) AS plancost, 0 AS plancost_xttotalrole,
+
+       CASE WHEN itemsite_costmethod = 'S' THEN
+               woplancost(wo_id) - stdcost(itemsite_item_id) * wo_qtyord
+       ELSE 0 END AS wopvar, 0 AS wopvar_xttotalrole,
+       CASE WHEN itemsite_costmethod = 'S' THEN 'Standard' ELSE 'Average/Job' END AS costmethod
+
 FROM wo JOIN itemsite ON (itemsite_id=wo_itemsite_id)
         JOIN item ON (item_id=itemsite_item_id)
         JOIN uom ON (uom_id=item_inv_uom_id)

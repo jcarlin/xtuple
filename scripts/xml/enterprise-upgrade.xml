@@ -1,5 +1,5 @@
-<package id        = "enterprise-upgrade-4100"
-         version   = "4.10.0"
+<package id        = "enterprise-upgrade-4110Beta"
+         version   = "4.11.0Beta"
          developer = "xTuple"
          descrip   = "load PostBooks resources"
          updater   = "2.2.4" >
@@ -30,8 +30,8 @@
 
   <prerequisite type = "query"
                 name = "Checking for too-new xTuple ERP database version" >
-    <query>SELECT compareVersion(fetchMetricText('ServerVersion'), '4.10.0') &lt;= 0;</query>
-    <message>This package may not be applied to a database newer than 4.10.0.
+    <query>SELECT compareVersion(fetchMetricText('ServerVersion'), '4.11.0Beta') &lt;= 0;</query>
+    <message>This package may not be applied to a database newer than 4.11.0Beta.
     </message>
   </prerequisite>
 
@@ -83,7 +83,6 @@
            LEFT OUTER JOIN source ON cmnttypesource_source_id = source_id;</query>
     <message>There are records in the cmnttypesource table with no matching source entries. Please see your system administrator or contact xTuple.</message>
   </prerequisite>
-
 
   <script file="postbooks-upgrade.sql" />
   <script file="inventory-upgrade.sql" />

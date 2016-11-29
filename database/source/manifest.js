@@ -5,7 +5,6 @@
     "drop_deprecated.sql",
     "xt/trigger_functions/acttype_did_change.sql",
     "xt/trigger_functions/comment_did_change.sql",
-    "xt/trigger_functions/createwf_after_insert.sql",
     "xt/trigger_functions/customer_did_change.sql",
     "xt/trigger_functions/obj_type_did_change.sql",
     "xt/trigger_functions/owner_record_did_change.sql",
@@ -135,7 +134,6 @@
     "xt/functions/shipment_value.sql",
     "xt/functions/trylock.sql",
     "xt/functions/undomerge.sql",
-    "xt/functions/workflow_inheritsource.sql",
     "xt/functions/workflow_notify.sql",
     "xt/tables/acttype.sql",
     "xt/tables/sharetype.sql",
@@ -240,6 +238,7 @@
     "grant_roles.sql",
     "update_version.sql",
 
-    "xt/patches/remove_dashboard_anything.sql"
+    "xt/patches/remove_dashboard_anything.sql",
+    "xt/patches/rm_workflow.sql"
   ]
 }

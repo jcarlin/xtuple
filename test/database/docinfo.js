@@ -35,7 +35,6 @@ var _ = require("underscore"),
         assert.match(path, /xt/,         'search path includes xt');
         assert.match(path, /public/,     'search path includes public');
         assert.match(path, /api/,        'search path includes api');
-        assert.match(path, /fixcountry/, 'search path includes fixcountry');
         done();
       });
     });

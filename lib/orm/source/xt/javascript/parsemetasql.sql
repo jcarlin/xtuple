@@ -1,4 +1,4 @@
-select xt.install_js('XT', 'MetaSQL', 'xtuple',  $$
+select xt.install_js('XT', 'MetaSQL', 'xtuple',  $parser$
 
 /**
  * WARNING!!! IMPORTANT!!! README!!!
@@ -5677,4 +5677,4 @@ XT.MetaSQL.parser = (function() {
 
 })();
 
-$$ );
+$parser$ );

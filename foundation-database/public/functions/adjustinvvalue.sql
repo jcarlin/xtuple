@@ -1,12 +1,14 @@
+DROP FUNCTION IF EXISTS adjustInvValue(INTEGER, NUMERIC, INTEGER);
+
 CREATE OR REPLACE FUNCTION adjustInvValue(pItemsiteid   INTEGER, 
                                           pNewValue     NUMERIC, 
-                                          pAccountid    INTEGER) 
+                                          pAccountid    INTEGER,
+                                          pDocNum       TEXT DEFAULT NULL) 
   RETURNS INTEGER AS $$
 -- Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple. 
 -- See www.xtuple.com/CPAL for the full text of the software license.
 DECLARE
   _delta          NUMERIC;
-  _glreturn       INTEGER;
   _invhistid      INTEGER;
 
 BEGIN
@@ -17,14 +19,14 @@ BEGIN
   FOR UPDATE;
 
   IF (NOT FOUND) THEN
-    RETURN -1;
+    RAISE EXCEPTION '[xtuple: adjustInvValue, -1]';
   END IF;
 
-  SELECT insertGLTransaction('I/M', '', 'Post Value',
+  PERFORM insertGLTransaction('I/M', '', 'Post Value',
          'Inventory Value Adjustment for ' || item_number,
          COALESCE (pAccountid, costcat_adjustment_accnt_id),
          costcat_asset_accnt_id, -1,
-         _delta, CURRENT_DATE) INTO _glreturn
+         _delta, CURRENT_DATE)
   FROM itemsite
    JOIN costcat ON (itemsite_costcat_id=costcat_id)
    JOIN item ON (itemsite_item_id=item_id)
@@ -34,15 +36,15 @@ BEGIN
   INSERT INTO invhist
    ( invhist_itemsite_id,
      invhist_transdate, invhist_transtype, invhist_invqty,
-     invhist_qoh_before, invhist_qoh_after,
-     invhist_docnumber, invhist_comments,
+     invhist_qoh_before, invhist_qoh_after, invhist_ordtype,
+     invhist_ordnumber, invhist_docnumber, invhist_comments,
      invhist_invuom, invhist_unitcost, invhist_hasdetail,
      invhist_costmethod, invhist_value_before, invhist_value_after,
      invhist_series )
   SELECT itemsite_id,
          CURRENT_TIMESTAMP, 'AD', 0.0,
-         itemsite_qtyonhand, itemsite_qtyonhand,
-         '', 'Inventory Value Adjustment',
+         itemsite_qtyonhand, itemsite_qtyonhand, 'AD',
+         COALESCE (pDocNum,''), '', 'Inventory Value Adjustment',
          uom_name, _delta, FALSE,
          itemsite_costmethod, itemsite_value, pNewValue,
          0

@@ -22,6 +22,7 @@ declare -a CONFIG=(\
   "private-extensions ARGS    skip  not-needed"                                  \
   "xtdesktop          default false not-yet-used"                                \
   "xtte               default false extensions/time_expense/foundation-database" \
+  "fixcountry         default false extensions/time_expense/foundation-database" \
 )
 
 usage() {

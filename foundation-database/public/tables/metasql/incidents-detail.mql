@@ -7,9 +7,14 @@
 SELECT DISTINCT ON (incdt_number) incdt_id AS id,
 incdt_number, DATE(incdt_timestamp) AS incdt_timestamp,
 crmacct_name,
-incdtcat_name, incdtseverity_name,  
-incdtpriority_name, incdtpriority_order, 
-incdtresolution_name, incdtresolution_order, crmacct_name, 
+incdtcat_name,
+COALESCE(incdtseverity_order, -1) AS incdtseverity_name,
+COALESCE(incdtseverity_name, '') AS incdtseverity_name_qtdisplayrole,
+COALESCE(incdtpriority_order, -1) AS incdtpriority_name,
+COALESCE(incdtpriority_name, '') AS incdtpriority_name_qtdisplayrole,
+COALESCE(incdtresolution_order, -1) AS incdtresolution_name,
+COALESCE(incdtresolution_name, '') AS incdtresolution_name_qtdisplayrole,
+status_seq AS incdt_status,
 CASE WHEN(incdt_status='N') THEN <? value("new") ?>
 WHEN(incdt_status='F') THEN <? value("feedback") ?>
 WHEN(incdt_status='C') THEN <? value("confirmed") ?>
@@ -17,7 +22,7 @@ WHEN(incdt_status='A') THEN <? value("assigned") ?>
 WHEN(incdt_status='R') THEN <? value("resolved") ?>
 WHEN(incdt_status='L') THEN <? value("closed") ?>
 ELSE incdt_status
-END,
+END AS incdt_status_qtdisplayrole,
 incdt_assigned_username, incdt_owner_username,
 incdt_summary, cntct_name, incdt_updated::date AS incdt_updated,
 prj_number, incdt_public,

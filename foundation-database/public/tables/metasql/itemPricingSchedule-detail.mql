@@ -1,7 +1,7 @@
 -- Group: itemPricingSchedule
 -- Name: detail
 -- Notes: used by itemPricingSchedule
--- Copyright (c) 1999-2014 by OpenMFG LLC, d/b/a xTuple.
+-- Copyright (c) 1999-2016 by OpenMFG LLC, d/b/a xTuple.
 -- See www.xtuple.com/CPAL for the full text of the software license.
 
 
@@ -53,8 +53,10 @@ SELECT ipsfreight_id AS id, 2 AS altid, <? value("freight") ?> AS type,
        uom_name AS priceuom, ipsfreight_price AS price,
        0.00 AS fixedAmt,
        NULL AS netPrice,
-       NULL AS type,
-       NULL AS method,
+       <? value("freight") ?> AS type,
+       CASE WHEN (ipsfreight_type='F') THEN <? value("flatrate") ?>
+            WHEN (ipsfreight_type='P') THEN <? value("peruom") ?>
+            ELSE 'error' END AS method,
        'weight' AS qtybreak_xtnumericrole,
        'salesprice' AS netPrice_xtnumericrole,
        'salesprice' AS price_xtnumericrole

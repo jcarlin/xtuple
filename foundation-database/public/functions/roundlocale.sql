@@ -21,7 +21,7 @@ BEGIN
   IF (pFractional) THEN
     RETURN ROUND(pQty, _scale);
   ELSE
-    IF (TRUNC(ROUND(pQty, _scale)) < ROUND(pQty, _scale)) THEN
+    IF (TRUNC(pQty) < ROUND(pQty, _scale)) THEN
       RETURN (TRUNC(pQty) + 1.0);
     ELSE
       RETURN TRUNC(pQty);

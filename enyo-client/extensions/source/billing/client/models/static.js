@@ -40,7 +40,6 @@ white:true*/
       V: 'VISA',
       A: 'AMERICAN_EXPRESS',
       D: 'DISCOVER',
-      R: 'OTHER_CREDIT_CARD',
       W: 'WIRE_TRANSFER',
       O: 'OTHER'
     };
@@ -56,7 +55,7 @@ white:true*/
        * otherwise.
        */
       isCreditCard: function () {
-        return _.contains([ 'M', 'V', 'A', 'D', 'R' ], this.id);
+        return _.contains([ 'M', 'V', 'A', 'D' ], this.id);
       }
     });
 

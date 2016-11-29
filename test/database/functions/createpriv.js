@@ -118,7 +118,7 @@ var _ = require("underscore"),
 
     it("should create a new priv test5Args", function (done) {
       var sql = "select createPriv('test', 'test5Args',"        +
-                "'call createPriv with 5 args', 10, 'xtdesktop') as result;";
+                "'call createPriv with 5 args', 10, 'xt') as result;";
       datasource.query(sql, creds, function (err, res) {
         assert.isNull(err);
         id.test5Args = res.rows[0].result;

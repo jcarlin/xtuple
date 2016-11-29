@@ -85,7 +85,7 @@ BEGIN
                                        WHEN _bank.bankaccnt_ach_desttype = 'F' THEN ' ' || _bank.bankaccnt_ach_fed_dest
                                        ELSE _bank.bankaccnt_ach_dest END, 10)
                           || RPAD(CASE WHEN _bank.bankaccnt_ach_origintype = 'B' THEN ' ' || _bank.bankaccnt_routing
-                                       WHEN _bank.bankaccnt_ach_origintype = 'I' THEN formatAchCompanyId()
+                                       WHEN _bank.bankaccnt_ach_origintype = 'I' THEN formatAchCompanyId(pbankaccntid)
                                        ELSE _bank.bankaccnt_ach_origin END, 10)
                           || TO_CHAR(CURRENT_DATE,      'YYMMDD')
                           || TO_CHAR(CURRENT_TIMESTAMP, 'HH24MM')
@@ -185,7 +185,7 @@ BEGIN
                                                 '0000000000SG'), 10)
                                 || RPAD(TO_CHAR(_batchdb, '0000000000V99SG'), 12)
                                 || RPAD(TO_CHAR(_batchcr, '0000000000V99SG'), 12)
-                                || RPAD(formatAchCompanyId(), 10)
+                                || RPAD(formatAchCompanyId(pbankaccntid), 10)
                                 || RPAD(' ', 19)
                                 || RPAD(' ',  6)
                                 || RPAD(_bank.bankaccnt_routing, 8)
@@ -212,7 +212,7 @@ BEGIN
                               || _serviceclass
                               || RPAD(fetchMetricText('ACHCompanyName'), 16)
                               || RPAD('', 20)   -- TODO: find a use
-                              || RPAD(formatAchCompanyId(), 10)
+                              || RPAD(formatAchCompanyId(pbankaccntid), 10)
                               || _sec
                               || RPAD('xTuple ERP', 10)
                               || TO_CHAR(_check.checkhead_checkdate, 'YYMMDD')
@@ -313,7 +313,7 @@ BEGIN
                                             '0000000000SG'), 10)
                             || RPAD(TO_CHAR(_batchdb, '0000000000V99SG'), 12)
                             || RPAD(TO_CHAR(_batchcr, '0000000000V99SG'), 12)
-                            || RPAD(formatAchCompanyId(), 10)
+                            || RPAD(formatAchCompanyId(pbankaccntid), 10)
                             || RPAD(' ', 19)
                             || RPAD(' ',  6)
                             || RPAD(_bank.bankaccnt_routing, 8)

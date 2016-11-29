@@ -67,7 +67,6 @@ SELECT cashrcpt_id, 2 AS type, '' AS cashrcpt_number, cust_number, cust_name,
               WHEN (cashrcpt_fundstype='V') THEN <? value("visa") ?>
               WHEN (cashrcpt_fundstype='A') THEN <? value("americanExpress") ?>
               WHEN (cashrcpt_fundstype='D') THEN <? value("discoverCard") ?>
-              WHEN (cashrcpt_fundstype='R') THEN <? value("otherCreditCard") ?>
               WHEN (cashrcpt_fundstype='K') THEN <? value("cash") ?>
               WHEN (cashrcpt_fundstype='W') THEN <? value("wireTransfer") ?>
               WHEN (cashrcpt_fundstype='O') THEN <? value("other") ?>
@@ -190,7 +189,6 @@ SELECT cashrcpt_id AS id, 0 AS type, cashrcpt_number,
               WHEN (cashrcpt_fundstype='V') THEN <? value("visa") ?>
               WHEN (cashrcpt_fundstype='A') THEN <? value("americanExpress") ?>
               WHEN (cashrcpt_fundstype='D') THEN <? value("discoverCard") ?>
-              WHEN (cashrcpt_fundstype='R') THEN <? value("otherCreditCard") ?>
               WHEN (cashrcpt_fundstype='K') THEN <? value("cash") ?>
               WHEN (cashrcpt_fundstype='W') THEN <? value("wireTransfer") ?>
               WHEN (cashrcpt_fundstype='O') THEN <? value("other") ?>

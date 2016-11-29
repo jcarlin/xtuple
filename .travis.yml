@@ -7,8 +7,10 @@ addons:
   postgresql: 9.3
 
 install:
+  - git merge origin/$TRAVIS_BRANCH
   - pg_lsclusters
   - bash scripts/install_xtuple.sh -ipn -d 9.3
+  - scripts/build_app.js
 
 before_script:
   - cd node-datasource

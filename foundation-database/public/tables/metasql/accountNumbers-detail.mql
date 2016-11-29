@@ -12,7 +12,7 @@ SELECT accnt.*,
             WHEN(accnt_type='R') THEN <? value("revenue") ?>
             ELSE accnt_type
        END AS accnt_type_qtdisplayrole,
-       company_external
+       company_external,
        subaccnttype_code, subaccnttype_descrip
   FROM (ONLY accnt LEFT OUTER JOIN
              company ON (accnt_company=company_number)) 

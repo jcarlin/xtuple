@@ -97,9 +97,9 @@ white:true*/
           {name: "sohead_id", type: "integer", value: pkId},
           {name: "hide closed", type: "boolean", value: "true"}
           // Optional. TODO - What should determine warehouse id?
-          //{name: "warehous_id", type: "integer", value: null} 
+          //{name: "warehous_id", type: "integer", value: null}
         ];
-        /* 
+        /*
           TODO - set printParameters according to the Report's req. parameters, i.e. PackingList:
         if (that.reportName === "PackingList") {
           printParameters.push(
@@ -123,7 +123,7 @@ white:true*/
       if (that.custFormType) {
         this.dispatch("XM.Sales", "findCustomerForm", [this.getValue("customer.uuid"), that.custFormType], {success: function (resp) {
           that.reportName = resp;
-          
+
           that.dispatch('XM.Model', 'fetchPrimaryKeyId', dispParams, dispOptions);
         }});
       } else {
@@ -153,10 +153,9 @@ white:true*/
       }
 
       if (this.getStatus() === XM.Model.EMPTY) {
-        // on a new order, set the hold type to the sale type default
+        // On a new order or saleType change with db TriggerWorkflow, set the hold type to the sale type default
         this.set({holdType: defaultHoldType});
-
-      } else if (defaultHoldType !== currentHoldType) {
+      } else if (defaultHoldType !== currentHoldType && !XT.session.settings.get("TriggerWorkflow")) {
         // otherwise, if the sale type wants to drive a change to the hold type,
         // prompt the user.
         this.notify("_updateHoldType?".loc(), {

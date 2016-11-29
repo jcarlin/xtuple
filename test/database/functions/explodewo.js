@@ -94,6 +94,8 @@ var _      = require("underscore"),
                 "                current_date, 'test explodewo()'), 'O'"        +
                 "  from (select pi.itemsite_id from itemsite pi"                +
                 "  join bomitem on pi.itemsite_item_id=bomitem_parent_item_id"  +
+                "        and getActiveRevId('BOM', pi.itemsite_item_id)=bomitem_rev_id" +
+                "        and current_date between bomitem_effective and (bomitem_expires-1)" +
                 "  join itemsite ci on bomitem_item_id = ci.itemsite_item_id"   +
                 "        and pi.itemsite_warehous_id = ci.itemsite_warehous_id" +
                 "  join item on ci.itemsite_item_id = item_id"                  +

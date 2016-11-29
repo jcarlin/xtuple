@@ -18,10 +18,11 @@ BEGIN
     RETURN -1;
   END IF;
 
-  IF fetchMetricBool('LotSerialControl') AND
-     EXISTS(SELECT 1 FROM lsdetail
+  IF fetchMetricBool('LotSerialControl') THEN
+    IF EXISTS(SELECT 1 FROM lsdetail
              WHERE lsdetail_itemsite_id = pItemsiteid) THEN
-    RETURN -1;
+      RETURN -1;
+    END IF;
   END IF;
 
   IF EXISTS(SELECT 1 FROM wo WHERE wo_itemsite_id = pItemsiteid) THEN

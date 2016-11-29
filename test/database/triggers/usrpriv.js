@@ -13,7 +13,8 @@ var _      = require("underscore"),
         addPrivSql = "insert into usrpriv (" +
                      "  usrpriv_priv_id, usrpriv_username"   +
                      ") select priv_id, $1" +
-                     "    from priv where priv_name = $2;"
+                     "    from priv where priv_name = $2;",
+        testPriv  = "fixACL"
     ;
 
     it('needs manager group', function (done) {
@@ -31,7 +32,7 @@ var _      = require("underscore"),
 
     it("should prevent the unprivileged user from granting privs", function (done) {
       var other = _.extend({}, otherCred,
-                           { parameters: [ otherCred.user, 'CanApprove' ] });
+                           { parameters: [ otherCred.user, testPriv ] });
       datasource.query(addPrivSql, other, function (err, res) {
         assert.isNotNull(err, "expect an error adding a privilege");
         assert.isTrue(String(err).indexOf("modify") > 0);
@@ -45,7 +46,7 @@ var _      = require("underscore"),
 
     it("should allow the unprivileged user to grant privs", function (done) {
       var other = _.extend({}, otherCred,
-                           { parameters: [ otherCred.user, 'CanApprove' ] });
+                           { parameters: [ otherCred.user, testPriv ] });
       datasource.query(addPrivSql, other, function (err, res) {
         assert.isNull(err, "expect no error adding a privilege");
         done();
@@ -64,7 +65,7 @@ var _      = require("underscore"),
 
     it("should prevent the unprivileged user from granting privs", function (done) {
       var other = _.extend({}, otherCred,
-                           { parameters: [ otherCred.user, 'CanApprove' ] });
+                           { parameters: [ otherCred.user, testPriv ] });
       datasource.query(addPrivSql, other, function (err, res) {
         assert.isNotNull(err, "expect an error adding a privilege");
         assert.isTrue(String(err).indexOf("modify") > 0);
@@ -78,7 +79,7 @@ var _      = require("underscore"),
 
     it("should allow the unprivileged user to grant privs", function (done) {
       var other = _.extend({}, otherCred,
-                           { parameters: [ otherCred.user, 'CanApprove' ] });
+                           { parameters: [ otherCred.user, testPriv ] });
       datasource.query(addPrivSql, other, function (err, res) {
         assert.isNull(err, "expect no error adding a privilege");
         done();

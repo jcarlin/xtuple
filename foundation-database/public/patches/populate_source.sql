@@ -877,6 +877,6 @@ SELECT createDoctype(97, --pDocAssNum
                      'join cohead on rentline_cohead_id=cohead_id join itemsite on coitem_itemsite_id=itemsite_id join item on itemsite_item_id=item_id', --pJoin
                      'rentine_id', --pParam
                      'rentalItem', --pUi
-                     'MaintainRentalItems', --pPriv
+                     '', --pPriv
                      'Sales' --pModule
 );

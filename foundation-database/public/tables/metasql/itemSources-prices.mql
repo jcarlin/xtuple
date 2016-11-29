@@ -58,7 +58,7 @@ SELECT itemsrcp_id, itemsrc_id,
 FROM itemsrc JOIN vendinfo ON (vend_id=itemsrc_vend_id AND vend_active)
              JOIN item ON (item_id=itemsrc_item_id)
              JOIN uom ON (uom_id=item_inv_uom_id)
-             LEFT OUTER JOIN itemsrcp ON (itemsrcp_itemsrc_id=itemsrc_id)
+             <? if not exists("itemsrc_id") ?>LEFT OUTER<? endif ?> JOIN itemsrcp ON (itemsrcp_itemsrc_id=itemsrc_id)
              LEFT OUTER JOIN contrct ON (contrct_id=itemsrc_contrct_id)
              LEFT OUTER JOIN whsinfo ON (warehous_id=itemsrcp_warehous_id)
 WHERE ((true)

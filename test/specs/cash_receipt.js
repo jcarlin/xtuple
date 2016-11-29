@@ -249,7 +249,7 @@
         describe('XM.FundsType', function () {
           it('sanity', function () {
             assert.ok(XM.FundsTypeEnum);
-            assert.equal(_.keys(XM.FundsTypeEnum).length, 10);
+            assert.equal(_.keys(XM.FundsTypeEnum).length, 9);
           });
           /**
           @member -

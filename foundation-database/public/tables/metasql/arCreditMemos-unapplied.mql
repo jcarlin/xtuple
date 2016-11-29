@@ -38,4 +38,17 @@ FROM aropen
 WHERE (aropen_doctype IN ('C', 'R'))
   AND (aropen_open)
   AND ((aropen_amount - aropen_paid - COALESCE(prepared,0.0) - COALESCE(cashapplied,0.0)) > 0.0)
+<? if exists('cust_id') ?>
+ AND (cust_id=<? value('cust_id') ?>)
+<? elseif exists('custgrp_id') ?>
+ AND (cust_id IN (SELECT custgrpitem_cust_id 
+                          FROM custgrpitem
+                          WHERE custgrpitem_custgrp_id =<? value('custgrp_id') ?>))
+<? elseif exists('custtype_id') ?>
+ AND (cust_custtype_id=<? value('custtype_id') ?>)
+<? elseif exists('custtype_pattern') ?>
+ AND (cust_custtype_id IN (SELECT custtype_id
+                           FROM custtype
+                           WHERE (custtype_code ~ <? value('custtype_pattern') ?>)))
+<? endif ?>
 ORDER BY aropen_docnumber;

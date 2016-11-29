@@ -180,16 +180,22 @@ setTimeout:true, before:true, clearTimeout:true, exports:true, it:true, describe
       @description Should be able to search the Item through Bar Code
       */
       it("Should be able to search the Item through Bar Code", function (done) {
-        var widget = new XV.ItemSiteWidget(),
-          mockReturn = function (results) {
-            assert.include(_.map(results.models, function (result) {
-              return result.getValue("item.number");
-            }), "BTRUCK1");
-            done();
-          };
+        var btruck1 = new XM.Item();
+        var callback = function () {
+          var barcode = btruck1.get("barcode");
+          var widget = new XV.ItemSiteWidget(),
+            mockReturn = function (results) {
+              assert.include(_.map(results.models, function (result) {
+                return result.getValue("item.number");
+              }), "BTRUCK1");
+              done();
+            };
 
-        widget.$.privateItemSiteWidget.mockReturn = mockReturn;
-        widget.$.privateItemSiteWidget.fetchCollection("739048117066", 10, "mockReturn");
+          widget.$.privateItemSiteWidget.mockReturn = mockReturn;
+          widget.$.privateItemSiteWidget.fetchCollection(barcode, 10, "mockReturn");
+        };
+
+        btruck1.fetch({number: "BTRUCK1", success: callback});
       });
     });
   };

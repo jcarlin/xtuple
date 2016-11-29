@@ -1,5 +1,5 @@
-<package id        = "add-manufacturing-to-distribution-4100"
-         version   = "4.10.0"
+<package id        = "add-manufacturing-to-distribution-4110Beta"
+         version   = "4.11.0Beta"
          developer = "xTuple"
          descrip   = "load Manufacturing resources"
          updater   = "2.2.4" >
@@ -25,8 +25,8 @@
 
   <prerequisite type = "query"
                 name = "Checking for too-new xTuple ERP database version" >
-    <query>SELECT compareVersion(fetchMetricText('ServerVersion'), '4.10.0') &lt;= 0;</query>
-    <message>This package may not be applied to a database newer than 4.10.0.
+    <query>SELECT compareVersion(fetchMetricText('ServerVersion'), '4.11.0Beta') &lt;= 0;</query>
+    <message>This package may not be applied to a database newer than 4.11.0Beta.
     </message>
   </prerequisite>
 
