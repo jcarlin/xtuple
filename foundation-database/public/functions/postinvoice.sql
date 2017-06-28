@@ -151,7 +151,7 @@ BEGIN
 --  Cache the amount due for this line
     _amount := _r.extprice;
 
-    IF (_amount > 0) THEN
+    IF (_amount != 0) THEN
 --  Credit the Sales Account for the invcitem item
       IF (_r.invcitem_rev_accnt_id IS NOT NULL) THEN
         SELECT getPrjAccntId(_p.invchead_prj_id, _r.invcitem_rev_accnt_id)

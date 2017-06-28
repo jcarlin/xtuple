@@ -42,6 +42,7 @@
     "public/patches/info1099.sql",
     "public/patches/remove_dashboard_anything_metric.sql",
     "public/patches/fixreportgrade.sql",
+    "public/patches/evnttype.sql",
 
     "public/types/_docinfo.sql",
     "public/types/_targetdoc.sql",

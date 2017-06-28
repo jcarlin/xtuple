@@ -24,8 +24,8 @@ declare -a CONFIG=(\
   "private-extensions ARGS    skip     skip  not-needed"                                  \
   "xtdesktop          skip    [demp]   false not-yet-used"                                \
   "xtte               skip    [demp]   true  extensions/time_expense/foundation-database" \
-  "nodejsshim         skip    [dem]    true  foundation-database/source"                  \
-  "xtdash             skip    [dem]    true  foundation-database/source"                  \
+  "nodejsshim         skip    [dem]    true  foundation-database"                         \
+  "xtdash             skip    [dem]    true  foundation-database"                         \
 )
 
 usage() {

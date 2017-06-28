@@ -28,10 +28,12 @@ SELECT
   xt.add_column('invcitem', 'invcitem_listprice', 'NUMERIC(16,4)', NULL,            'public'),
   xt.add_column('invcitem', 'invcitem_subnumber', 'INTEGER', 'NOT NULL DEFAULT 0', 'public');
 
+ALTER TABLE invcitem DROP CONSTRAINT IF EXISTS invcitem_invchead_id_linenumber_unique;
+
 SELECT
   xt.add_constraint('invcitem', 'invcitem_pkey', 'PRIMARY KEY (invcitem_id)', 'public'),
-  xt.add_constraint('invcitem', 'invcitem_invchead_id_linenumber_unique',
-                'UNIQUE (invcitem_invchead_id, invcitem_linenumber)', 'public'),
+  xt.add_constraint('invcitem', 'invcitem_invchead_id_linenumber_subnumber_unique',
+                'UNIQUE (invcitem_invchead_id, invcitem_linenumber, invcitem_subnumber)', 'public'),
   xt.add_constraint('invcitem', 'invcitem_invchead_id_fkey',
                     'FOREIGN KEY (invcitem_invchead_id) REFERENCES invchead(invchead_id)
                      ON UPDATE CASCADE ON DELETE CASCADE', 'public'),

@@ -362,13 +362,13 @@ ALTER TABLE shipform ENABLE TRIGGER ALL;
 
 ALTER TABLE shipvia DISABLE TRIGGER ALL;
 
-INSERT INTO shipvia (shipvia_id, shipvia_code, shipvia_descrip) VALUES (13, 'UPS-Ground', 'UPS Ground');
-INSERT INTO shipvia (shipvia_id, shipvia_code, shipvia_descrip) VALUES (14, 'UPS-Next Day', 'UPS-Next Day');
+INSERT INTO shipvia (shipvia_id, shipvia_code, shipvia_descrip) VALUES (13, 'UPS-GROUND', 'UPS Ground');
+INSERT INTO shipvia (shipvia_id, shipvia_code, shipvia_descrip) VALUES (14, 'UPS-NEXTDAY', 'UPS-Next Day');
 INSERT INTO shipvia (shipvia_id, shipvia_code, shipvia_descrip) VALUES (15, 'SAIA', 'SAIA');
 INSERT INTO shipvia (shipvia_id, shipvia_code, shipvia_descrip) VALUES (17, 'AVERITT', 'Averitt');
 INSERT INTO shipvia (shipvia_id, shipvia_code, shipvia_descrip) VALUES (18, 'DHL', 'DHL');
-INSERT INTO shipvia (shipvia_id, shipvia_code, shipvia_descrip) VALUES (19, 'FEDEX-Ground', 'FEDEX-Ground');
-INSERT INTO shipvia (shipvia_id, shipvia_code, shipvia_descrip) VALUES (20, 'FEDEX-Next Day', 'FEDEX-Next Day');
+INSERT INTO shipvia (shipvia_id, shipvia_code, shipvia_descrip) VALUES (19, 'FEDEX-GROUND', 'FEDEX-Ground');
+INSERT INTO shipvia (shipvia_id, shipvia_code, shipvia_descrip) VALUES (20, 'FEDEX-NEXTDAY', 'FEDEX-Next Day');
 INSERT INTO shipvia (shipvia_id, shipvia_code, shipvia_descrip) VALUES (21, 'ROADWAY', 'ROADWAY');
 INSERT INTO shipvia (shipvia_id, shipvia_code, shipvia_descrip) VALUES (22, 'USF', 'USF');
 INSERT INTO shipvia (shipvia_id, shipvia_code, shipvia_descrip) VALUES (23, 'WATKINS', 'Watkins');

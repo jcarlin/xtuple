@@ -19,7 +19,7 @@ SELECT
   xt.add_column('checkhead', 'checkhead_expcat_id',     'INTEGER', NULL,       'public'),
   xt.add_column('checkhead', 'checkhead_for',              'TEXT', 'NOT NULL', 'public'),
   xt.add_column('checkhead', 'checkhead_notes',            'TEXT', 'NOT NULL', 'public'),
-  xt.add_column('checkhead', 'checkhead_journalnumber', 'INTEGER', 'NOT NULL', 'public'),
+  xt.add_column('checkhead', 'checkhead_journalnumber', 'INTEGER', NULL,       'public'),
   xt.add_column('checkhead', 'checkhead_curr_id',       'INTEGER', 'DEFAULT basecurrid() NOT NULL', 'public'),
   xt.add_column('checkhead', 'checkhead_deleted',       'BOOLEAN', 'DEFAULT false NOT NULL', 'public'),
   xt.add_column('checkhead', 'checkhead_ach_batch',        'TEXT', NULL,       'public'),

@@ -14,7 +14,7 @@ $BODY$
 -- Copyright (c) 1999-2017 by OpenMFG LLC, d/b/a xTuple.
 -- See www.xtuple.com/CPAL for the full text of the software license.
 DECLARE
-  _test          INTEGER;
+  _whsId         INTEGER;
   _invhistid     INTEGER;
   _itemlocSeries INTEGER := COALESCE(pItemlocSeries, NEXTVAL('itemloc_series_seq'));
   _parentQty     NUMERIC;
@@ -51,7 +51,7 @@ BEGIN
   END IF;
 
 --  Make sure that all Component Item Sites exist
-  SELECT bomitem_id INTO _test
+  SELECT itemsite_warehous_id INTO _whsId
   FROM wo, bomitem, itemsite
   WHERE ( (wo_itemsite_id=itemsite_id)
    AND (itemsite_item_id=bomitem_parent_item_id)
@@ -73,7 +73,7 @@ BEGIN
     RETURN -2;
   END IF;
 
-  SELECT formatWoNumber(pWoid) INTO _woNumber;
+  _woNumber := formatWoNumber(pWoid);
 
   SELECT roundQty(item_fractional, pQty) INTO _parentQty
   FROM wo, itemsite, item
@@ -190,9 +190,6 @@ BEGIN
    AND (itemsite_item_id=item_id)
    AND (wo_id=pWoid));
 
-
-
---  ROB Distribute to G/L - create Cost Variance, debit WIP
   PERFORM insertGLTransaction( 'W/O', 'WO', _woNumber,
                                ('Post Other Cost ' || item_number || ' ' || _sense || ' Manufacturing'),
                                getPrjAccntId(wo_prj_id, costelem_exp_accnt_id),
@@ -209,27 +206,22 @@ BEGIN
     (itemsite_costcat_id = costcat_id) AND
     (costelem_exp_accnt_id) IS NOT NULL  AND
     (costelem_sys = false));
---End
 
-
---  Make sure the W/O is at issue status
   UPDATE wo
   SET wo_status='I'
   WHERE (wo_id=pWoid);
 
-  -- Post distribution detail regardless of loc/control methods because postItemlocSeries is required.
-  -- If it is a controlled item and the results were 0 something is wrong.
   IF (pPreDistributed AND (pPostDistDetail OR _controlled)) THEN
     IF (postDistDetail(_itemlocSeries) <= 0 AND (_controlled OR _hasControlledMaterialItems)) THEN
-      RAISE EXCEPTION 'Posting Distribution Detail Returned 0 Results, [xtuple: postProduction, -5]';
+      PERFORM postEvent('PostProductionDistributionWarning', 'W',
+                        pWoid, _whsId, _woNumber,
+                        NULL, NULL, NULL, NULL);
     END IF;
   END IF;
 
   RETURN _itemlocSeries;
 
 END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
+$BODY$ LANGUAGE plpgsql;
 ALTER FUNCTION postproduction(integer, numeric, boolean, integer, timestamp with time zone, boolean, boolean)
   OWNER TO admin;
