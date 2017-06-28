@@ -238,7 +238,7 @@ BEGIN
     SELECT NEXTVAL('invcitem_invcitem_id_seq') INTO _iitemid;
 
     INSERT INTO invcitem
-    ( invcitem_id, invcitem_invchead_id, invcitem_linenumber, 
+    ( invcitem_id, invcitem_invchead_id, invcitem_linenumber, invcitem_subnumber,
       invcitem_item_id,
       invcitem_warehous_id,
       --invcitem_status, 
@@ -249,7 +249,7 @@ BEGIN
       invcitem_price_uom_id, invcitem_price_invuomratio,
       invcitem_custpn, invcitem_notes, invcitem_taxtype_id )
     VALUES
-    ( _iitemid, _iheadid, _r.quitem_linenumber, 
+    ( _iitemid, _iheadid, _r.quitem_linenumber, _r.quitem_subnumber,
       (SELECT itemsite_item_id FROM itemsite WHERE itemsite_id = _r.quitem_itemsite_id),
       (SELECT itemsite_warehous_id FROM itemsite WHERE itemsite_id = _r.quitem_itemsite_id),
       --'O', 
