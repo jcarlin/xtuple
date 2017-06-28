@@ -205,7 +205,7 @@ BEGIN
     SELECT NEXTVAL('coitem_coitem_id_seq') INTO _soitemid;
 
     INSERT INTO coitem
-    ( coitem_id, coitem_cohead_id, coitem_linenumber, coitem_itemsite_id,
+    ( coitem_id, coitem_cohead_id, coitem_linenumber, coitem_subnumber, coitem_itemsite_id,
       coitem_status, coitem_scheddate, coitem_promdate,
       coitem_price, coitem_custprice, coitem_listprice,
       coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned,
@@ -214,7 +214,7 @@ BEGIN
       coitem_unitcost, coitem_prcost,
       coitem_custpn, coitem_memo, coitem_taxtype_id, coitem_order_id, coitem_dropship )
     VALUES
-    ( _soitemid, _soheadid, _r.quitem_linenumber, _r.quitem_itemsite_id,
+    ( _soitemid, _soheadid, _r.quitem_linenumber, _r.quitem_subnumber, _r.quitem_itemsite_id,
       'O', _r.quitem_scheddate, _r.quitem_promdate,
       _r.quitem_price, _r.quitem_custprice, _r.quitem_listprice,
       _r.quitem_qtyord, 0, 0,

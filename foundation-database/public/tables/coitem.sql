@@ -46,6 +46,8 @@ SELECT
 
 SELECT
   xt.add_constraint('coitem', 'coitem_pkey', 'PRIMARY KEY (coitem_id)', 'public'),
+  xt.add_constraint('coitem', 'coitem_cohead_id_linenumber_unique',
+                    'UNIQUE (coitem_cohead_id, coitem_linenumber, coitem_subnumber)', 'public'),
   xt.add_constraint('coitem', 'coitem_coitem_cohead_id_fkey',
                     'FOREIGN KEY (coitem_cohead_id) REFERENCES cohead(cohead_id) ON DELETE CASCADE', 'public'),
   xt.add_constraint('coitem', 'coitem_coitem_cos_accnt_id_fkey',

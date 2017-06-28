@@ -31,7 +31,7 @@ SELECT
 SELECT
   xt.add_constraint('invcitem', 'invcitem_pkey', 'PRIMARY KEY (invcitem_id)', 'public'),
   xt.add_constraint('invcitem', 'invcitem_invchead_id_linenumber_unique',
-                'UNIQUE (invcitem_invchead_id, invcitem_linenumber)', 'public'),
+                    'UNIQUE (invcitem_invchead_id, invcitem_linenumber, invcitem_subnumber)', 'public'),
   xt.add_constraint('invcitem', 'invcitem_invchead_id_fkey',
                     'FOREIGN KEY (invcitem_invchead_id) REFERENCES invchead(invchead_id)
                      ON UPDATE CASCADE ON DELETE CASCADE', 'public'),
